@@ -1,7 +1,7 @@
-﻿using MathEngine.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MathEngine.Utils;
 
 namespace MathEngine
 {
@@ -12,9 +12,24 @@ namespace MathEngine
         public Token[] GetTokens(string expression);
     }
 
-    class _Tokenizer : ITokenizer
+    public class Tokenizer : ITokenizer
     {
-        public _Tokenizer(IMathContext context)
+        private static Tokenizer? _tokenizer;
+
+        public static Tokenizer Instance
+        {
+            get
+            {
+                if(_tokenizer == null)
+                {
+                    _tokenizer = new Tokenizer(IMathContext.Default);
+                }
+
+                return _tokenizer;
+            }
+        }
+
+        public Tokenizer(IMathContext context)
         {
             Context = context;
         }

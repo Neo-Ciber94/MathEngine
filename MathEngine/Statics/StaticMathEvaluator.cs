@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace MathEngine
 {
-    public static class MathEvaluator
+    public static class StaticMathEvaluator
     {
         public static double Evaluate(string expression) => Evaluate(expression, IMathContext.Default);
         
         public static double Evaluate(string expression, IMathContext context)
         {
-            var tokens = Tokenizer.GetTokens(expression, context);
+            var tokens = StaticTokenizer.GetTokens(expression, context);
             var rpn = MathParser.InfixToRPN(tokens, context);
             return Evaluate(rpn, context);
         }

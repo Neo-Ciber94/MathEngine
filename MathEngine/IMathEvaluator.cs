@@ -19,9 +19,26 @@ namespace MathEngine
         }
     }
 
-    public class _MathEvaluator : IMathEvaluator
+    public class MathEvaluator : IMathEvaluator
     {
-        public _MathEvaluator(IMathContext context, ITokenizer tokenizer)
+        private static MathEvaluator? _evaluator;
+
+        public static MathEvaluator Instance
+        {
+            get
+            {
+                if(_evaluator == null)
+                {
+                    _evaluator = new MathEvaluator(IMathContext.Default);
+                }
+
+                return _evaluator;
+            }
+        }
+
+        public MathEvaluator(IMathContext context) : this(context, MathEngine.Tokenizer.Instance) { }
+
+        public MathEvaluator(IMathContext context, ITokenizer tokenizer)
         {
             Context = context;
             Tokenizer = tokenizer;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MathEngine
 {
-    public static class Tokenizer
+    public static class StaticTokenizer
     {
         public static Token[] GetTokens(string expression) => GetTokens(expression, IMathContext.Default);
 

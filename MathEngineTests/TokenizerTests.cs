@@ -10,7 +10,7 @@ namespace MathEngine.Tests
         [Test()]
         public void GetTokensTest1()
         {
-            var result = Tokenizer.GetTokens("10 + 5 * 2");
+            var result = Tokenizer.Instance.GetTokens("10 + 5 * 2");
             var expected = new string[] { "10", "+", "5", "*", "2" };
 
             Assert.AreEqual(5, result.Length, result.CollectionToString(s => s.Value));
@@ -26,7 +26,7 @@ namespace MathEngine.Tests
         [Test()]
         public void GetTokensTest2()
         {
-            var result = Tokenizer.GetTokens("5+-2");
+            var result = Tokenizer.Instance.GetTokens("5+-2");
             var expected = new string[] { "5", "+", "-", "2"};
 
             Assert.AreEqual(4, result.Length);
@@ -41,7 +41,7 @@ namespace MathEngine.Tests
         [Test()]
         public void GetTokensTest3()
         {
-            var result = Tokenizer.GetTokens("max(5 + 2 * 1, 3 / -2)");
+            var result = Tokenizer.Instance.GetTokens("max(5 + 2 * 1, 3 / -2)");
             var expected = new string[] { "max", "(", "5", "+", "2", "*", "1", ",", "3", "/", "-", "2", ")"};
 
             Assert.AreEqual(13, result.Length, result.CollectionToString(s => s.Value));
@@ -65,7 +65,7 @@ namespace MathEngine.Tests
         [Test()]
         public void GetTokensTest4()
         {
-            var result = Tokenizer.GetTokens("-(10+(-2))");
+            var result = Tokenizer.Instance.GetTokens("-(10+(-2))");
             var expected = new string[] { "-", "(", "10", "+", "(", "-", "2", ")", ")"};
 
             Assert.AreEqual(9, result.Length, result.CollectionToString(s => s.Value));
@@ -86,7 +86,7 @@ namespace MathEngine.Tests
         public void GetTokensTest5()
         {
             var expression = "(10 + (-5 * 2))";
-            var result = Tokenizer.GetTokens(expression);
+            var result = Tokenizer.Instance.GetTokens(expression);
             var expected = new string[]
             {
                 "(", "10", "+", "(", "-", "5", "*", "2", ")", ")"
