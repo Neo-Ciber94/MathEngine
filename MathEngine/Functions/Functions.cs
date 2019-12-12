@@ -14,7 +14,6 @@ namespace MathEngine.Functions
         }
 
         public string Name { get;  }
-
         public int Arity { get; }
 
         public double Call(double[] args)
@@ -41,9 +40,7 @@ namespace MathEngine.Functions
         }
 
         public string Name { get; }
-
         public int Precedence { get; }
-
         public Association Associativity { get; }
 
         public double Evaluate(double a, double b) => _func(a, b);

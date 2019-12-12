@@ -5,22 +5,43 @@ using System.Collections.Generic;
 
 namespace MathEngine
 {
-    public static class MathEvaluator
+    public interface IMathEvaluator
     {
-        public static double Evaluate(string expression) => Evaluate(expression, IMathContext.Default);
-        
-        public static double Evaluate(string expression, IMathContext context)
+        public IMathContext Context { get; }
+        public ITokenizer Tokenizer { get; }
+
+        public double Evaluate(Token[] tokens);
+
+        public double Evaluate(string expression)
         {
-            var tokens = Tokenizer.GetTokens(expression, context);
-            var rpn = MathParser.InfixToRPN(tokens, context);
-            return Evaluate(rpn, context);
+            var tokens = Tokenizer.GetTokens(expression);
+            return Evaluate(tokens);
+        }
+    }
+
+    public class _MathEvaluator : IMathEvaluator
+    {
+        public _MathEvaluator(IMathContext context, ITokenizer tokenizer)
+        {
+            Context = context;
+            Tokenizer = tokenizer;
         }
 
-        public static double Evaluate(Token[] tokens) => Evaluate(tokens, IMathContext.Default);
+        public IMathContext Context { get; }
 
-        public static double Evaluate(Token[] tokens, IMathContext context)
+        public ITokenizer Tokenizer { get; }
+
+        public double Evaluate(string expression)
+        {
+            var tokens = Tokenizer.GetTokens(expression);
+            var rpn = MathParser.InfixToRPN(tokens);
+            return Evaluate(rpn);
+        }
+
+        public double Evaluate(Token[] tokens)
         {
             Stack<double> values = new Stack<double>();
+            IMathContext context = Context;
 
             foreach (var t in tokens)
             {
@@ -29,7 +50,7 @@ namespace MathEngine
                 {
                     values.Push(t.ToDouble());
                 }
-                if(type == TokenType.Variable)
+                if (type == TokenType.Variable)
                 {
                     values.Push(context.GetValue(t.Value));
                 }
@@ -48,9 +69,9 @@ namespace MathEngine
                     double result = context.Evaluate(a, b, operation);
                     values.Push(result);
                 }
-                else if(type == TokenType.Function)
+                else if (type == TokenType.Function)
                 {
-                    if(context.TryGetFunction(t.Value, out var func))
+                    if (context.TryGetFunction(t.Value, out var func))
                     {
                         int arity = func!.Arity;
 
@@ -71,13 +92,13 @@ namespace MathEngine
                         throw new Exception($"Cannot find the specified function: {t.Value}.");
                     }
                 }
-                else if(type == TokenType.Unknown)
+                else if (type == TokenType.Unknown)
                 {
                     throw new ArgumentException($"Invalid token: {t}");
                 }
             }
 
-            if(values.Count > 1)
+            if (values.Count > 1)
             {
                 throw new ArgumentException("Expression evaluation have failed.");
             }
@@ -85,9 +106,7 @@ namespace MathEngine
             return values.Pop();
         }
 
-        public static Token[] InfixToRPN(Token[] tokens) => InfixToRPN(tokens, IMathContext.Default);
-
-        public static Token[] InfixToRPN(Token[] tokens, IMathContext context)
+        public Token[] InfixToRPN(Token[] tokens)
         {
             if (tokens.Length == 0)
             {
@@ -96,6 +115,7 @@ namespace MathEngine
 
             Stack<Token> output = new Stack<Token>();
             Stack<Token> operators = new Stack<Token>();
+            IMathContext context = Context;
 
             foreach (var t in tokens)
             {

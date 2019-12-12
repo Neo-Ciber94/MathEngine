@@ -28,6 +28,8 @@ namespace MathEngine
                         PushNumber(output, operators, t);
                         break;
                     case TokenType.Function:
+                        PushFunction(context, output, operators, t);
+                        break;
                     case TokenType.UnaryOperator:
                         operators.Push(t);
                         break;
@@ -38,7 +40,16 @@ namespace MathEngine
                         PushParentheses(output, operators, t);
                         break;
                     case TokenType.Comma:
-                        continue;
+                        while (operators.TryPeek(out Token? op))
+                        {
+                            if(op.Value == "(") 
+                            { 
+                                break; 
+                            }
+
+                            output.Push(operators.Pop());
+                        }
+                        break;
                     default:
                         throw new ArithmeticException($"Invalid token: {t}");
                 }
@@ -72,6 +83,23 @@ namespace MathEngine
             }
         }
 
+        private static void PushFunction(IMathContext context, Stack<Token> output, Stack<Token> operators, Token t)
+        {
+            string name = t.Value;
+
+            if (context.TryGetFunction(name, out var func))
+            {
+                if (func is IInfixFunction)
+                {
+                    PushBinaryOperator(context, output, operators, t);
+                }
+                else
+                {
+                    operators.Push(t);
+                }
+            }
+        }
+
         private static void PushBinaryOperator(IMathContext context, Stack<Token> output, Stack<Token> operators, Token t)
         {
             while (operators.TryPeek(out Token? top))
@@ -86,7 +114,7 @@ namespace MathEngine
                 {
                     output.Push(operators.Pop());
                 }
-                else if (context.TryGetBinaryOperator(topOperatorName[0], out var topOperator) && context.TryGetBinaryOperator(t.Value[0], out var binaryOperator))
+                else if (context.TryGetBinaryOperator(topOperatorName, out var topOperator) && context.TryGetBinaryOperator(t.Value, out var binaryOperator))
                 {
                     int topOperatorPrecedence = topOperator!.Precedence;
                     int operatorPrecedence = binaryOperator!.Precedence;

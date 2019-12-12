@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using MathEngine.Utils;
+using NUnit.Framework;
+using System.Linq;
 
 namespace MathEngine.Tests
 {
@@ -78,6 +80,31 @@ namespace MathEngine.Tests
             Assert.AreEqual(new Token("2", TokenType.Number), result[6]);
             Assert.AreEqual(new Token(")", TokenType.Parenthesis), result[7]);
             Assert.AreEqual(new Token(")", TokenType.Parenthesis), result[8]);
+        }
+
+        [Test()]
+        public void GetTokensTest5()
+        {
+            var expression = "(10 + (-5 * 2))";
+            var result = Tokenizer.GetTokens(expression);
+            var expected = new string[]
+            {
+                "(", "10", "+", "(", "-", "5", "*", "2", ")", ")"
+            };
+
+            Assert.AreEqual(10, result.Length, result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.TokensToString(), result.CollectionToString(s => s.Value));
+
+            Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[0]);
+            Assert.AreEqual(new Token("10", TokenType.Number), result[1]);
+            Assert.AreEqual(new Token("+", TokenType.BinaryOperator), result[2]);
+            Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[3]);
+            Assert.AreEqual(new Token("-", TokenType.UnaryOperator), result[4]);
+            Assert.AreEqual(new Token("5", TokenType.Number), result[5]);
+            Assert.AreEqual(new Token("*", TokenType.BinaryOperator), result[6]);
+            Assert.AreEqual(new Token("2", TokenType.Number), result[7]);
+            Assert.AreEqual(new Token(")", TokenType.Parenthesis), result[8]);
+            Assert.AreEqual(new Token(")", TokenType.Parenthesis), result[9]);
         }
     }
 }
