@@ -13,8 +13,8 @@ namespace MathEngine.Tests
         public void InfixToRPNTest1()
         {
             var expression = "10 + 5 * 2";
-            var tokens = Tokenizer.Instance.GetTokens(expression);
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
             // 10 5 2 * +
             var expected = new string[] { "10", "5", "2", "*", "+" };
@@ -25,8 +25,8 @@ namespace MathEngine.Tests
         public void InfixToRPNTest2()
         {
 
-            var tokens = Tokenizer.Instance.GetTokens("(10 + (-5 * 2))");
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens("(10 + (-5 * 2))");
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
             //10 5 - 2 * +
             var expected = new string[] { "10", "5", "-", "2", "*", "+" };
@@ -36,8 +36,8 @@ namespace MathEngine.Tests
         [Test()]
         public void InfixToRPNTest3()
         {
-            var tokens = Tokenizer.Instance.GetTokens("max(10 - 4, 2 + 6)");
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens("max(10 - 4, 2 + 6)");
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
             // 10 4 - 2 6 + max
             var expected = new string[] { "10", "4", "-", "2", "6", "+", "max" };
@@ -47,8 +47,8 @@ namespace MathEngine.Tests
         [Test()]
         public void InfixToRPNTest4()
         {
-            var tokens = Tokenizer.Instance.GetTokens("e^2 + 1");
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens("e^2 + 1");
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
             // e 2 ^ 1 +
             var expected = new string[] { "e", "2", "^", "1", "+" };
@@ -59,46 +59,60 @@ namespace MathEngine.Tests
         public void EvaluateTest1()
         {
             var expression = "10 + 5 * 2";
-            var tokens = Tokenizer.Instance.GetTokens(expression);
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
-            Assert.AreEqual(20, MathEvaluator.Instance.Evaluate(rpn));
-            Assert.AreEqual(20, MathEvaluator.Instance.Evaluate(expression));
+            Assert.AreEqual(20, MathEvaluator.Evaluate(rpn));
+            Assert.AreEqual(20, MathEvaluator.Evaluate(expression));
         }
 
         [Test()]
         public void EvaluateTest2()
         {
             var expression = "(10 + (-5 * 2))";
-            var tokens = Tokenizer.Instance.GetTokens(expression);
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
-            Assert.AreEqual(0, MathEvaluator.Instance.Evaluate(rpn));
-            Assert.AreEqual(0, MathEvaluator.Instance.Evaluate(expression));
+            Assert.AreEqual(0, MathEvaluator.Evaluate(rpn));
+            Assert.AreEqual(0, MathEvaluator.Evaluate(expression));
         }
 
         [Test()]
         public void EvaluateTest3()
         {
             var expression = "max(10 - 4, 2 + 6)";
-            var tokens = Tokenizer.Instance.GetTokens(expression);
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
-            Assert.AreEqual(8, MathEvaluator.Instance.Evaluate(rpn));
-            Assert.AreEqual(8, MathEvaluator.Instance.Evaluate(expression));
+            Assert.AreEqual(8, MathEvaluator.Evaluate(rpn));
+            Assert.AreEqual(8, MathEvaluator.Evaluate(expression));
         }
 
         [Test()]
         public void EvaluateTest4()
         {
             var expression = "e^2 + 1";
-            var tokens = Tokenizer.Instance.GetTokens(expression);
-            var rpn = MathEvaluator.Instance.InfixToRPN(tokens);
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
 
             var result = Math.Exp(2) + 1;
             var delta = 0.00001;
-            Assert.AreEqual(result, MathEvaluator.Instance.Evaluate(rpn), delta);
-            Assert.AreEqual(result, MathEvaluator.Instance.Evaluate(expression), delta);
+            Assert.AreEqual(result, MathEvaluator.Evaluate(rpn), delta);
+            Assert.AreEqual(result, MathEvaluator.Evaluate(expression), delta);
+        }
+
+        [Test()]
+        public void EvaluateTest5()
+        {
+            var expression = "(5 * 2) + 1";
+            var tokens = Tokenizer.Default.GetTokens(expression);
+            var rpn = MathEvaluator.InfixToRPN(tokens);
+
+            var expectedRPN = new string[] { "5", "2", "*", "1", "+" };
+            CollectionAssert.AreEqual(expectedRPN, rpn.TokensToString(), rpn.TokensToString().AsString());
+
+            Assert.AreEqual(11, MathEvaluator.Evaluate(expression));
+            Assert.AreEqual(11, MathEvaluator.Evaluate(rpn));
         }
     }
 }

@@ -2,49 +2,26 @@
 using MathEngine.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MathEngine
 {
-    public class MathEvaluator : IMathEvaluator
+    public static class MathEvaluator
     {
-        private static MathEvaluator? _evaluator;
-
-        public static MathEvaluator Instance
+        public static double Evaluate(string expression) => Evaluate(expression, Tokenizer.Default);
+        public static double Evaluate(string expression, ITokenizer tokenizer)
         {
-            get
-            {
-                if(_evaluator == null)
-                {
-                    _evaluator = new MathEvaluator(IMathContext.Default);
-                }
-
-                return _evaluator;
-            }
+            var context = tokenizer.Context;
+            var tokens = tokenizer.GetTokens(expression);
+            var rpn = InfixToRPN(tokens, context);
+            return Evaluate(rpn, context);
         }
 
-        public MathEvaluator(IMathContext context) : this(context, MathEngine.Tokenizer.Instance) { }
+        public static double Evaluate(Token[] tokens) => Evaluate(tokens, MathContext.Default);
 
-        public MathEvaluator(IMathContext context, ITokenizer tokenizer)
-        {
-            Context = context;
-            Tokenizer = tokenizer;
-        }
-
-        public IMathContext Context { get; }
-
-        public ITokenizer Tokenizer { get; }
-
-        public double Evaluate(string expression)
-        {
-            var tokens = Tokenizer.GetTokens(expression);
-            var rpn = InfixToRPN(tokens);
-            return Evaluate(rpn);
-        }
-
-        public double Evaluate(Token[] tokens)
+        public static double Evaluate(Token[] tokens, IMathContext context)
         {
             Stack<double> values = new Stack<double>();
-            IMathContext context = Context;
 
             foreach (var t in tokens)
             {
@@ -103,13 +80,15 @@ namespace MathEngine
 
             if (values.Count > 1)
             {
-                throw new ArgumentException("Expression evaluation have failed.");
+                throw new ArgumentException($"Expression evaluation have failed: \nValues on stack: {values.AsString()}.\nExpression: {tokens.AsString()}");
             }
 
             return values.Pop();
         }
 
-        public Token[] InfixToRPN(Token[] tokens)
+        public static Token[] InfixToRPN(Token[] tokens) => InfixToRPN(tokens, MathContext.Default);
+
+        public static Token[] InfixToRPN(Token[] tokens, IMathContext context)
         {
             if (tokens.Length == 0)
             {
@@ -118,7 +97,6 @@ namespace MathEngine
 
             Stack<Token> output = new Stack<Token>();
             Stack<Token> operators = new Stack<Token>();
-            IMathContext context = Context;
 
             foreach (var t in tokens)
             {

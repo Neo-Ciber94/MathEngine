@@ -7,19 +7,11 @@ namespace MathEngine
 {
     public class Tokenizer : ITokenizer
     {
-        private static Tokenizer? _tokenizer;
+        public static Tokenizer Default { get; }
 
-        public static Tokenizer Instance
+        static Tokenizer()
         {
-            get
-            {
-                if(_tokenizer == null)
-                {
-                    _tokenizer = new Tokenizer(IMathContext.Default);
-                }
-
-                return _tokenizer;
-            }
+            Default = new Tokenizer(MathContext.Default);
         }
 
         public Tokenizer(IMathContext context)
@@ -140,7 +132,7 @@ namespace MathEngine
                 return false;
             }
 
-            if (prevChar != null && (char.IsLetterOrDigit(prevChar.Value) || prevChar == '.'))
+            if (prevChar != null && (char.IsLetterOrDigit(prevChar.Value) || prevChar == '.' || prevChar == ')'))
             {
                 return false;
             }

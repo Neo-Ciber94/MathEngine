@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using MathEngine.Functions;
 
@@ -8,21 +6,6 @@ namespace MathEngine
 {
     public interface IMathContext
     {
-        private static IMathContext _default;
-
-        public static IMathContext Default
-        {
-            get
-            {
-                if(_default == null)
-                {
-                    _default = new MathContext();
-                }
-
-                return _default;
-            }
-        }
-
         public bool IsFunction(string functionName);
         public bool IsBinaryOperator(string symbol);
         public bool IsUnaryOperator(string symbol);

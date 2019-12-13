@@ -11,12 +11,19 @@ namespace MathEngine
 {
     public class MathContext : IMathContext
     {
+        public static MathContext Default { get; }
+
+        static MathContext()
+        {
+            Default = new MathContext();
+        }
+
         private readonly IReadOnlyDictionary<string, IFunction> _functions;
         private readonly IReadOnlyDictionary<string, IBinaryOperator> _binaryOperators;
         private readonly IReadOnlyDictionary<string, IUnaryOperator> _unaryOperators;
         private readonly IReadOnlyDictionary<string, double> _values;
 
-        public MathContext()
+        private MathContext()
         {
             _functions = GetMathContextFunctions();
             _binaryOperators = GetMathContextDataOfType<IBinaryOperator>();
