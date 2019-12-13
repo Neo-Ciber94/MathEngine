@@ -26,7 +26,12 @@ namespace MathEngine
 
         public double ToDouble()
         {
-            return double.Parse(Value);
+            if(double.TryParse(Value, out var result))
+            {
+                return result;
+            }
+
+            throw new FormatException($"Cannot convert the specified value to double: {Value}.");
         }
 
         public override string ToString()

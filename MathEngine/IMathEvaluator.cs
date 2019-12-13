@@ -1,4 +1,5 @@
-﻿namespace MathEngine
+﻿
+namespace MathEngine
 {
     public interface IMathEvaluator
     {

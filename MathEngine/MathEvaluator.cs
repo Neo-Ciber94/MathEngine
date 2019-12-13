@@ -67,8 +67,8 @@ namespace MathEngine
                 else if (type == TokenType.BinaryOperator)
                 {
                     var op = context.GetBinaryOperator(t.Value);
-                    double a = values.Pop();
-                    double b = values.Pop();
+                    double b = values.Pop(); // right value
+                    double a = values.Pop(); // left value
                     double result = op.Evaluate(a, b);
                     values.Push(result);
                 }
