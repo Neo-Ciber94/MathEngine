@@ -5,22 +5,46 @@ using System.Collections.Generic;
 
 namespace MathEngine
 {
-    public static class StaticMathEvaluator
+    public class MathEvaluator : IMathEvaluator
     {
-        public static double Evaluate(string expression) => Evaluate(expression, IMathContext.Default);
-        
-        public static double Evaluate(string expression, IMathContext context)
+        private static MathEvaluator? _evaluator;
+
+        public static MathEvaluator Instance
         {
-            var tokens = StaticTokenizer.GetTokens(expression, context);
-            var rpn = MathParser.InfixToRPN(tokens, context);
-            return Evaluate(rpn, context);
+            get
+            {
+                if(_evaluator == null)
+                {
+                    _evaluator = new MathEvaluator(IMathContext.Default);
+                }
+
+                return _evaluator;
+            }
         }
 
-        public static double Evaluate(Token[] tokens) => Evaluate(tokens, IMathContext.Default);
+        public MathEvaluator(IMathContext context) : this(context, MathEngine.Tokenizer.Instance) { }
 
-        public static double Evaluate(Token[] tokens, IMathContext context)
+        public MathEvaluator(IMathContext context, ITokenizer tokenizer)
+        {
+            Context = context;
+            Tokenizer = tokenizer;
+        }
+
+        public IMathContext Context { get; }
+
+        public ITokenizer Tokenizer { get; }
+
+        public double Evaluate(string expression)
+        {
+            var tokens = Tokenizer.GetTokens(expression);
+            var rpn = InfixToRPN(tokens);
+            return Evaluate(rpn);
+        }
+
+        public double Evaluate(Token[] tokens)
         {
             Stack<double> values = new Stack<double>();
+            IMathContext context = Context;
 
             foreach (var t in tokens)
             {
@@ -29,28 +53,28 @@ namespace MathEngine
                 {
                     values.Push(t.ToDouble());
                 }
-                if(type == TokenType.Variable)
+                if (type == TokenType.Variable)
                 {
                     values.Push(context.GetValue(t.Value));
                 }
                 else if (type == TokenType.UnaryOperator)
                 {
-                    string operation = t.Value;
+                    var op = context.GetUnaryOperator(t.Value);
                     double value = values.Pop();
-                    double result = context.Evaluate(value, operation);
+                    double result = op.Evaluate(value);
                     values.Push(result);
                 }
                 else if (type == TokenType.BinaryOperator)
                 {
-                    string operation = t.Value;
+                    var op = context.GetBinaryOperator(t.Value);
                     double a = values.Pop();
                     double b = values.Pop();
-                    double result = context.Evaluate(a, b, operation);
+                    double result = op.Evaluate(a, b);
                     values.Push(result);
                 }
-                else if(type == TokenType.Function)
+                else if (type == TokenType.Function)
                 {
-                    if(context.TryGetFunction(t.Value, out var func))
+                    if (context.TryGetFunction(t.Value, out var func))
                     {
                         int arity = func!.Arity;
 
@@ -71,13 +95,13 @@ namespace MathEngine
                         throw new Exception($"Cannot find the specified function: {t.Value}.");
                     }
                 }
-                else if(type == TokenType.Unknown)
+                else if (type == TokenType.Unknown)
                 {
                     throw new ArgumentException($"Invalid token: {t}");
                 }
             }
 
-            if(values.Count > 1)
+            if (values.Count > 1)
             {
                 throw new ArgumentException("Expression evaluation have failed.");
             }
@@ -85,9 +109,7 @@ namespace MathEngine
             return values.Pop();
         }
 
-        public static Token[] InfixToRPN(Token[] tokens) => InfixToRPN(tokens, IMathContext.Default);
-
-        public static Token[] InfixToRPN(Token[] tokens, IMathContext context)
+        public Token[] InfixToRPN(Token[] tokens)
         {
             if (tokens.Length == 0)
             {
@@ -96,6 +118,7 @@ namespace MathEngine
 
             Stack<Token> output = new Stack<Token>();
             Stack<Token> operators = new Stack<Token>();
+            IMathContext context = Context;
 
             foreach (var t in tokens)
             {
@@ -110,7 +133,7 @@ namespace MathEngine
                         PushFunction(context, output, operators, t);
                         break;
                     case TokenType.UnaryOperator:
-                        operators.Push(t);
+                        PushUnaryOperator(output, operators, context, t);
                         break;
                     case TokenType.BinaryOperator:
                         PushBinaryOperator(context, output, operators, t);
@@ -179,6 +202,28 @@ namespace MathEngine
             }
         }
 
+        private static void PushUnaryOperator(Stack<Token> output, Stack<Token> operators, IMathContext context, Token t)
+        {
+            if (context.TryGetUnaryOperator(t.Value, out var op))
+            {
+                if (op!.Notation == OperatorNotation.Postfix)
+                {
+                    if (output.Count > 0)
+                    {
+                        output.Push(t);
+                    }
+                    else
+                    {
+                        throw new Exception($"Misplaced unary operator: {t}");
+                    }
+                }
+                else if (op!.Notation == OperatorNotation.Prefix)
+                {
+                    operators.Push(t);
+                }
+            }
+        }
+
         private static void PushBinaryOperator(IMathContext context, Stack<Token> output, Stack<Token> operators, Token t)
         {
             while (operators.TryPeek(out Token? top))
@@ -198,7 +243,7 @@ namespace MathEngine
                     int topOperatorPrecedence = topOperator!.Precedence;
                     int operatorPrecedence = binaryOperator!.Precedence;
 
-                    if ((topOperatorPrecedence > operatorPrecedence) || (topOperatorPrecedence == operatorPrecedence && topOperator.Associativity == Association.Left))
+                    if ((topOperatorPrecedence > operatorPrecedence) || (topOperatorPrecedence == operatorPrecedence && topOperator.Associativity == OperatorAssociativity.Left))
                     {
                         output.Push(operators.Pop());
                     }

@@ -31,7 +31,7 @@ namespace MathEngine.Functions
     {
         private readonly Func<double, double, double> _func;
 
-        public BinaryOperator(char operatorSymbol, int precedence, Association associativity, Func<double, double, double> operation)
+        public BinaryOperator(char operatorSymbol, int precedence, OperatorAssociativity associativity, Func<double, double, double> operation)
         {
             Name = operatorSymbol.ToString();
             Precedence = precedence;
@@ -41,7 +41,7 @@ namespace MathEngine.Functions
 
         public string Name { get; }
         public int Precedence { get; }
-        public Association Associativity { get; }
+        public OperatorAssociativity Associativity { get; }
 
         public double Evaluate(double a, double b) => _func(a, b);
     }
@@ -50,13 +50,16 @@ namespace MathEngine.Functions
     {
         public readonly Func<double, double> _func;
 
-        public UnaryOperator(char operatorSymbol, Func<double, double> operation)
+        public UnaryOperator(char operatorSymbol, OperatorNotation notation, Func<double, double> operation)
         {
             Name = operatorSymbol.ToString();
+            Notation = notation;
             _func = operation;
         }
 
         public string Name { get; }
+
+        public OperatorNotation Notation { get; }
 
         public double Evaluate(double d) => _func(d);
     }

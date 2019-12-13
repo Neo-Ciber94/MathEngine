@@ -1,18 +1,20 @@
-﻿using MathEngine.Functions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using MathEngine.Functions;
 
 namespace MathEngine
 {
     public interface IMathContext
     {
         private static IMathContext _default;
+
         public static IMathContext Default
         {
             get
             {
-                if (_default == null)
+                if(_default == null)
                 {
                     _default = new DefaultMathContext();
                 }
@@ -21,143 +23,127 @@ namespace MathEngine
             }
         }
 
-        public IReadOnlyDictionary<string, IBinaryOperator> Operators { get; }
-        public IReadOnlyDictionary<string, IUnaryOperator> UnaryOperators { get; }
-        public IReadOnlyDictionary<string, IFunction> Functions { get; }
-        public IReadOnlyDictionary<string, double> Variables { get; }
-
-        protected string GetString(string s) => s;
-
-        public bool IsOperator(string value) => Operators.ContainsKey(value) || UnaryOperators.ContainsKey(value);
-
-        public bool IsOperator(char value) => IsOperator(value.ToString());
-
-        public bool IsFunction(string name) => Functions.ContainsKey(GetString(name));
-
-        public bool IsVariable(string name) => Variables.ContainsKey(GetString(name));
-
-        public bool TryGetBinaryOperator(string symbol, out IBinaryOperator? op) => Operators.TryGetValue(symbol, out op);
-
-        public bool TryGetUnaryOperator(string symbol, out IUnaryOperator? op) => UnaryOperators.TryGetValue(symbol, out op);
-
-        public bool TryGetFunction(string functionName, out IFunction? func) => Functions.TryGetValue(GetString(functionName), out func);
-
-        public double Evaluate(double a, double b, string operation)
+        public bool IsFunction(string functionName);
+        public bool IsBinaryOperator(string symbol);
+        public bool IsUnaryOperator(string symbol);
+        public bool IsVariableOrConstant(string name);
+        public bool IsBinaryOperator(char symbol) => IsBinaryOperator(symbol.ToString());
+        public bool IsUnaryOperator(char symbol) => IsUnaryOperator(symbol.ToString());
+        public bool TryGetFunction(string functionName, [NotNullWhen(returnValue: true)] out IFunction? func);
+        public bool TryGetBinaryOperator(string symbol, [NotNullWhen(returnValue: true)] out IBinaryOperator? op);
+        public bool TryGetUnaryOperator(string symbol, [NotNullWhen(returnValue: true)]  out IUnaryOperator? op);
+        public IFunction GetFunction(string functionName)
         {
-            if (Operators.TryGetValue(operation, out var op))
+            if (TryGetFunction(functionName, out var func))
             {
-                return op.Evaluate(a, b);
+                return func!;
             }
 
-            throw new InvalidOperationException($"Cannot find the given operator: {operation}.");
+            throw new Exception($"Cannot find the specified function: {functionName}.");
         }
-
-        public double Evaluate(double a, string operation)
+        public IBinaryOperator GetBinaryOperator(string symbol)
         {
-            if (UnaryOperators.TryGetValue(operation, out var op))
+            if (TryGetBinaryOperator(symbol, out var op))
             {
-                return op.Evaluate(a);
+                return op!;
             }
 
-            throw new InvalidOperationException($"Cannot find the given operator: {operation}.");
+            throw new Exception($"Cannot find the specified operator: {symbol}.");
         }
-
-        public double CallFunction(string functionName, double[] args)
+        public IUnaryOperator GetUnaryOperator(string symbol)
         {
-            if (Functions.TryGetValue(GetString(functionName), out var func))
+            if (TryGetUnaryOperator(symbol, out var op))
             {
-                return func.Call(args);
+                return op!;
             }
 
-            throw new InvalidOperationException($"Cannot find the given function: {functionName}.");
+            throw new Exception($"Cannot find the specified operator: {symbol}.");
         }
-
-        public double GetValue(string variableName)
-        {
-            if (Variables.TryGetValue(GetString(variableName), out var value))
-            {
-                return value;
-            }
-
-            throw new InvalidOperationException($"Cannot find the given variable: {variableName}.");
-        }
+        public double GetValue(string name);
     }
 
     class DefaultMathContext : IMathContext
     {
-        private IReadOnlyDictionary<string, IBinaryOperator>? _operators;
-        private IReadOnlyDictionary<string, IUnaryOperator>? _unaryOperators;
-        private IReadOnlyDictionary<string, IFunction>? _functions;
-        private IReadOnlyDictionary<string, double>? _variables;
+        private readonly IReadOnlyDictionary<string, IBinaryOperator> _binaryOperators;
+        private readonly IReadOnlyDictionary<string, IUnaryOperator> _unaryOperators;
+        private readonly IReadOnlyDictionary<string, IFunction> _functions;
+        private readonly IReadOnlyDictionary<string, double> _variables;
 
-        protected string GetString(string s) => s.ToLower();
-
-        public IReadOnlyDictionary<string, IBinaryOperator> Operators
+        public DefaultMathContext()
         {
-            get
-            {
-                if (_operators == null)
-                {
-                    var builder = ImmutableDictionary.CreateBuilder<string, IBinaryOperator>();
-                    builder.Add("+", new BinaryOperator('+', precedence: 0, Association.Left, (a, b) => (a + b)));
-                    builder.Add("-", new BinaryOperator('-', precedence: 0, Association.Left, (a, b) => (a - b)));
-                    builder.Add("*", new BinaryOperator('*', precedence: 1, Association.Left, (a, b) => (a * b)));
-                    builder.Add("/", new BinaryOperator('/', precedence: 1, Association.Left, (a, b) => (a / b)));
-                    builder.Add("^", new BinaryOperator('^', precedence: 2, Association.Right, (a, b) => Math.Pow(a, b)));
-                    _operators = builder.ToImmutable();
-                }
-
-                return _operators;
-            }
+            _binaryOperators = GetBinaryOperators();
+            _unaryOperators = GetUnaryOperators();
+            _functions = GetFunctions();
+            _variables = GetVariablesAndConstants();
         }
 
-        public IReadOnlyDictionary<string, IUnaryOperator> UnaryOperators
+        private IReadOnlyDictionary<string, IBinaryOperator> GetBinaryOperators()
         {
-            get
-            {
-                if (_unaryOperators == null)
-                {
-                    var builder = ImmutableDictionary.CreateBuilder<string, IUnaryOperator>();
-                    builder.Add("+", new UnaryOperator('+', (a) => a));
-                    builder.Add("-", new UnaryOperator('-', (a) => -a));
-                    _unaryOperators = builder.ToImmutable();
-                }
-
-                return _unaryOperators;
-            }
+            var builder = ImmutableDictionary.CreateBuilder<string, IBinaryOperator>(StringIgnoreCaseEqualityComparer.Instance);
+            builder.Add("+", new BinaryOperator('+', precedence: 0, OperatorAssociativity.Left, (a, b) => (a + b)));
+            builder.Add("-", new BinaryOperator('-', precedence: 0, OperatorAssociativity.Left, (a, b) => (a - b)));
+            builder.Add("*", new BinaryOperator('*', precedence: 1, OperatorAssociativity.Left, (a, b) => (a * b)));
+            builder.Add("/", new BinaryOperator('/', precedence: 1, OperatorAssociativity.Left, (a, b) => (a / b)));
+            builder.Add("^", new BinaryOperator('^', precedence: 2, OperatorAssociativity.Right, (a, b) => Math.Pow(a, b)));
+            return builder.ToImmutable();
         }
 
-        public IReadOnlyDictionary<string, IFunction> Functions
+        private IReadOnlyDictionary<string, IUnaryOperator> GetUnaryOperators()
         {
-            get
-            {
-                if (_functions == null)
-                {
-                    var builder = ImmutableDictionary.CreateBuilder<string, IFunction>();
-                    builder.Add("max", new Function("max", arity: 2, (args) => Math.Max(args[0], args[1])));
-                    builder.Add("min", new Function("min", arity: 2, (args) => Math.Min(args[0], args[1])));
-                    builder.Add("mod", new Function("mod", arity: 2, (args) => args[0] % args[1]));
-                    _functions = builder.ToImmutable();
-                }
-
-                return _functions;
-            }
+            var builder = ImmutableDictionary.CreateBuilder<string, IUnaryOperator>(StringIgnoreCaseEqualityComparer.Instance);
+            builder.Add("+", new UnaryOperator('+', OperatorNotation.Prefix, (a) => a));
+            builder.Add("-", new UnaryOperator('-', OperatorNotation.Prefix, (a) => -a));
+            return builder.ToImmutable();
         }
 
-        public IReadOnlyDictionary<string, double> Variables
+        private IReadOnlyDictionary<string, IFunction> GetFunctions()
         {
-            get
-            {
-                if (_variables == null)
-                {
-                    var builder = ImmutableDictionary.CreateBuilder<string, double>();
-                    builder.Add("pi", Math.PI);
-                    builder.Add("e", Math.E);
-                    _variables = builder.ToImmutable();
-                }
+            var builder = ImmutableDictionary.CreateBuilder<string, IFunction>(StringIgnoreCaseEqualityComparer.Instance);
+            builder.Add("max", new Function("max", arity: 2, (args) => Math.Max(args[0], args[1])));
+            builder.Add("min", new Function("min", arity: 2, (args) => Math.Min(args[0], args[1])));
+            builder.Add("mod", new Function("mod", arity: 2, (args) => args[0] % args[1]));
+            return builder.ToImmutable();
+        }
 
-                return _variables;
+        private IReadOnlyDictionary<string, double> GetVariablesAndConstants()
+        {
+            var builder = ImmutableDictionary.CreateBuilder<string, double>(StringIgnoreCaseEqualityComparer.Instance);
+            builder.Add("pi", Math.PI);
+            builder.Add("e", Math.E);
+            return builder.ToImmutable();
+        }
+
+        public bool IsFunction(string functionName) => _functions.ContainsKey(functionName);
+
+        public bool IsBinaryOperator(string symbol) => _binaryOperators.ContainsKey(symbol);
+
+        public bool IsUnaryOperator(string symbol) => _unaryOperators.ContainsKey(symbol);
+
+        public bool IsVariableOrConstant(string name) => _variables.ContainsKey(name);
+
+        public bool TryGetFunction(string functionName, [NotNullWhen(true)] out IFunction? func)
+        {
+            return _functions.TryGetValue(functionName, out func);
+        }
+
+        public bool TryGetBinaryOperator(string symbol, [NotNullWhen(true)] out IBinaryOperator? op)
+        {
+            return _binaryOperators.TryGetValue(symbol, out op);
+        }
+
+        public bool TryGetUnaryOperator(string symbol, [NotNullWhen(true)] out IUnaryOperator? op)
+        {
+            return _unaryOperators.TryGetValue(symbol, out op);
+        }
+
+        public double GetValue(string name)
+        {
+            if(_variables.TryGetValue(name, out var result))
+            {
+                return result;
             }
+
+            throw new Exception($"Cannot find the value named: {name}");
         }
     }
 }

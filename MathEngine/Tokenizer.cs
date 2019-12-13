@@ -1,19 +1,39 @@
-﻿using MathEngine.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MathEngine.Utils;
 
 namespace MathEngine
 {
-    public static class StaticTokenizer
+    public class Tokenizer : ITokenizer
     {
-        public static Token[] GetTokens(string expression) => GetTokens(expression, IMathContext.Default);
+        private static Tokenizer? _tokenizer;
 
-        public static Token[] GetTokens(string expression, IMathContext context)
+        public static Tokenizer Instance
+        {
+            get
+            {
+                if(_tokenizer == null)
+                {
+                    _tokenizer = new Tokenizer(IMathContext.Default);
+                }
+
+                return _tokenizer;
+            }
+        }
+
+        public Tokenizer(IMathContext context)
+        {
+            Context = context;
+        }
+
+        public IMathContext Context { get; }
+
+        public Token[] GetTokens(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
-                if(expression == null)
+                if (expression == null)
                 {
                     throw new ArgumentNullException(nameof(expression));
                 }
@@ -22,7 +42,8 @@ namespace MathEngine
             }
 
             List<Token> tokens = new List<Token>();
-            StringScanner scanner = new StringScanner(expression.RemoveWhiteSpaces());
+            StringScanner scanner = new StringScanner(expression.RemoveWhiteSpaces()); //TODO: Handle whitespaces within this method
+            IMathContext context = Context;
             char curChar;
 
             while (scanner.HasNext)
@@ -38,7 +59,7 @@ namespace MathEngine
                     }
                 }
 
-                if (context.IsOperator(curChar))
+                if (context.IsBinaryOperator(curChar))
                 {
                     tokens.Add(new Token(curChar, TokenType.BinaryOperator));
                 }
@@ -71,7 +92,7 @@ namespace MathEngine
                     TokenType type = value switch
                     {
                         var n when context.IsFunction(n) => TokenType.Function,
-                        var n when context.IsVariable(n) => TokenType.Variable,
+                        var n when context.IsVariableOrConstant(n) => TokenType.Variable,
                         _ => TokenType.Unknown
                     };
 
