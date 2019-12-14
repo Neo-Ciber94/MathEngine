@@ -8,7 +8,7 @@ namespace MathEngine.Functions
     {
         public double Evaluate(double value);
 
-        double IFunction.Call(double[] args)
+        double IFunction.Call(ReadOnlySpan<double> args)
         {
             if (args.Length != Arity)
             {

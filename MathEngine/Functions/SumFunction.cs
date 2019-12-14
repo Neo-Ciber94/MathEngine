@@ -5,7 +5,7 @@ namespace MathEngine.Functions
     public sealed class SumFunction : IFunction
     {
         public string Name => "Sum";
-        public double Call(double[] args)
+        public double Call(ReadOnlySpan<double> args)
         {
             double total = 0;
             foreach(var d in args)

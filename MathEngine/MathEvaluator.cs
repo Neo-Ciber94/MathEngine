@@ -2,13 +2,13 @@
 using MathEngine.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MathEngine
 {
     public static class MathEvaluator
     {
         public static double Evaluate(string expression) => Evaluate(expression, Tokenizer.Default);
+        
         public static double Evaluate(string expression, ITokenizer tokenizer)
         {
             var context = tokenizer.Context;
@@ -16,9 +16,26 @@ namespace MathEngine
             var rpn = InfixToRPN(tokens, context);
             return Evaluate(rpn, context);
         }
-
+        
+        public static double Evaluate(string expression, IMathContext context)
+        {
+            var tokenizer = new Tokenizer(context);
+            var tokens = tokenizer.GetTokens(expression);
+            var rpn = InfixToRPN(tokens);
+            return Evaluate(rpn, context);
+        }
+        
+        public static double Evaluate(string expression, params (string, double)[] variables)
+        {
+            var context = new MathContext(variables);
+            var tokenizer = new Tokenizer(context);
+            var tokens = tokenizer.GetTokens(expression);
+            var rpn = InfixToRPN(tokens);
+            return Evaluate(rpn, context);
+        }
+        
         public static double Evaluate(Token[] tokens) => Evaluate(tokens, MathContext.Default);
-
+        
         public static double Evaluate(Token[] tokens, IMathContext context)
         {
             Stack<double> values = new Stack<double>();
@@ -37,17 +54,28 @@ namespace MathEngine
                 else if (type == TokenType.UnaryOperator)
                 {
                     var op = context.GetUnaryOperator(t.Value);
-                    double value = values.Pop();
-                    double result = op.Evaluate(value);
-                    values.Push(result);
+                    if (values.TryPop(out double value))
+                    {
+                        double result = op.Evaluate(value);
+                        values.Push(result);
+                    }
+                    else
+                    {
+                        ThrowEvaluationError(values, tokens);
+                    }
                 }
                 else if (type == TokenType.BinaryOperator)
                 {
                     var op = context.GetBinaryOperator(t.Value);
-                    double b = values.Pop(); // right value
-                    double a = values.Pop(); // left value
-                    double result = op.Evaluate(a, b);
-                    values.Push(result);
+                    if (values.TryPop(out double b) && values.TryPop(out double a))
+                    {
+                        double result = op.Evaluate(a, b);
+                        values.Push(result);
+                    }
+                    else
+                    {
+                        ThrowEvaluationError(values, tokens);
+                    }
                 }
                 else if (type == TokenType.Function)
                 {
@@ -57,14 +85,25 @@ namespace MathEngine
 
                         if (arity == 0)
                         {
-                            var empty = Array.Empty<double>();
+                            var empty = ReadOnlySpan<double>.Empty;
                             values.Push(func.Call(empty));
                         }
                         else
                         {
-                            double[] args = values.PopAll();
-                            double result = func.Call(args);
-                            values.Push(result);
+                            unsafe
+                            {
+                                int length = values.Count;
+                                int i = length - 1;
+                                double* pointer = stackalloc double[length];
+
+                                while(values.TryPop(out double d))
+                                {
+                                    pointer[i--] = d;
+                                }
+
+                                double result = func.Call(new ReadOnlySpan<double>(pointer, length));
+                                values.Push(result);
+                            }
                         }
                     }
                     else
@@ -74,13 +113,13 @@ namespace MathEngine
                 }
                 else if (type == TokenType.Unknown)
                 {
-                    throw new ArgumentException($"Invalid token: {t}");
+                    throw new ExpressionEvaluationException($"Invalid token: {t}");
                 }
             }
 
             if (values.Count > 1)
             {
-                throw new ArgumentException($"Expression evaluation have failed: \nValues on stack: {values.AsString()}.\nExpression: {tokens.AsString()}");
+                ThrowEvaluationError(values, tokens);
             }
 
             return values.Pop();
@@ -150,6 +189,11 @@ namespace MathEngine
             return result;
         }
 
+        private static void ThrowEvaluationError(Stack<double> values, Token[] tokens)
+        {
+            throw new ExpressionEvaluationException($"Expression evaluation have failed. \nValues on stack: {values.AsString()}.\nExpression: {tokens.AsString()}");
+        }
+
         private static void PushNumber(Stack<Token> output, Stack<Token> operators, Token t)
         {
             output.Push(t);
@@ -192,7 +236,7 @@ namespace MathEngine
                     }
                     else
                     {
-                        throw new Exception($"Misplaced unary operator: {t}");
+                        throw new ExpressionEvaluationException($"Misplaced unary operator: {t}");
                     }
                 }
                 else if (op!.Notation == OperatorNotation.Prefix)
@@ -264,7 +308,7 @@ namespace MathEngine
 
                 if (!closedParentheses)
                 {
-                    throw new ArithmeticException("Parentheses mismatch.");
+                    throw new ExpressionEvaluationException("Parentheses mismatch.");
                 }
             }
         }

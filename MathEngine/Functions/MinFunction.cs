@@ -7,7 +7,7 @@ namespace MathEngine.Functions
     {
         public string Name => "Min";
 
-        public double Call(double[] args)
+        public double Call(ReadOnlySpan<double> args)
         {
             Check.ArgumentCount(2, args.Length);
             return Math.Min(args[0], args[1]);

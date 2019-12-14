@@ -7,7 +7,7 @@ namespace MathEngine.Functions
     {
         public string Name => "Tan";
 
-        public double Call(double[] args)
+        public double Call(ReadOnlySpan<double> args)
         {
             Check.ArgumentCount(1, args.Length);
             return Math.Tan(args[0]);

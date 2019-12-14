@@ -3,14 +3,14 @@ using MathEngine.Utils;
 
 namespace MathEngine.Functions
 {
-    public sealed class SqrtFunction : IFunction
+    public sealed class CosecantFunction : IFunction
     {
-        public string Name => "Sqrt";
+        public string Name => "Csc";
 
         public double Call(ReadOnlySpan<double> args)
         {
             Check.ArgumentCount(1, args.Length);
-            return Math.Sqrt(args[0]);
+            return 1 / Math.Sin(args[0]);
         }
     }
 }

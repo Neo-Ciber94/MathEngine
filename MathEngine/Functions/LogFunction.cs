@@ -7,7 +7,7 @@ namespace MathEngine.Functions
     {
         public string Name => "Log";
 
-        public double Call(double[] args)
+        public double Call(ReadOnlySpan<double> args)
         {
             if(args.Length == 1)
             {

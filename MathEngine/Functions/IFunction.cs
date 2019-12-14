@@ -1,4 +1,6 @@
-﻿namespace MathEngine.Functions
+﻿using System;
+
+namespace MathEngine.Functions
 {
     public interface IFunction
     {
@@ -6,6 +8,6 @@
 
         public int Arity => -1;
 
-        public double Call(double[] args);
+        public double Call(ReadOnlySpan<double> args);
     }
 }

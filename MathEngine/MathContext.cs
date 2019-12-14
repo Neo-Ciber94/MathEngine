@@ -28,16 +28,33 @@ namespace MathEngine
             _functions = GetMathContextFunctions();
             _binaryOperators = GetMathContextDataOfType<IBinaryOperator>();
             _unaryOperators = GetMathContextDataOfType<IUnaryOperator>();
-            _values = GetVariablesAndConstantValues();
+            _values = GetConstantsAndVariables();
         }
 
-        private IReadOnlyDictionary<string, double> GetVariablesAndConstantValues()
+        public MathContext(params (string, double)[] variables)
         {
-            var builder = ImmutableDictionary.CreateBuilder<string, double>(StringIgnoreCaseEqualityComparer.Instance);
-            builder.Add("pi", Math.PI);
-            builder.Add("e", Math.E);
-            builder.Add("infinity", double.PositiveInfinity);
-            return builder.ToImmutable();
+            var defaultInstance = MathContext.Default;
+            _functions = defaultInstance._functions;
+            _binaryOperators = defaultInstance._binaryOperators;
+            _unaryOperators = defaultInstance._unaryOperators;
+
+            var dictionary = GetConstantsAndVariables() as Dictionary<string, double>;
+            foreach (var e in variables)
+            {
+                dictionary!.Add(e.Item1, e.Item2);
+            }
+
+            _values = dictionary!;
+        }
+
+        private static IReadOnlyDictionary<string, double> GetConstantsAndVariables()
+        {
+            return new Dictionary<string, double>(StringIgnoreCaseEqualityComparer.Instance)
+            {
+                { "pi", Math.PI },
+                { "e", Math.E },
+                { "infinity", double.PositiveInfinity }
+            };
         }
 
         private static IReadOnlyDictionary<string, IFunction> GetMathContextFunctions()
@@ -88,6 +105,18 @@ namespace MathEngine
             return _functions.TryGetValue(functionName, out func);
         }
 
+        public bool TryGetInfixFunction(string functionName, [NotNullWhen(true)] out IInfixFunction? func)
+        {
+            func = null;
+            if (TryGetFunction(functionName, out var outFunc))
+            {
+                func = outFunc as IInfixFunction;
+                return func != null;
+            }
+
+            return false;
+        }
+
         public bool TryGetBinaryOperator(string symbol, [NotNullWhen(true)] out IBinaryOperator? op)
         {
             return _binaryOperators.TryGetValue(symbol, out op);
@@ -96,6 +125,46 @@ namespace MathEngine
         public bool TryGetUnaryOperator(string symbol, [NotNullWhen(true)] out IUnaryOperator? op)
         {
             return _unaryOperators.TryGetValue(symbol, out op);
+        }
+
+        public IFunction GetFunction(string functionName)
+        {
+            if(TryGetFunction(functionName, out var func))
+            {
+                return func;
+            }
+
+            throw new Exception($"Cannot find the function named: {functionName}");
+        }
+
+        public IInfixFunction GetInfixFunction(string functionName)
+        {
+            if (TryGetFunction(functionName, out var func) && func is IInfixFunction)
+            {
+                return (IInfixFunction)func;
+            }
+
+            throw new Exception($"Cannot find the function named: {functionName}");
+        }
+
+        public IBinaryOperator GetBinaryOperator(string symbol)
+        {
+            if (TryGetBinaryOperator(symbol, out var op))
+            {
+                return op;
+            }
+
+            throw new Exception($"Cannot find the operator named: {symbol}");
+        }
+
+        public IUnaryOperator GetUnaryOperator(string symbol)
+        {
+            if (TryGetUnaryOperator(symbol, out var op))
+            {
+                return op;
+            }
+
+            throw new Exception($"Cannot find the operator named: {symbol}");
         }
 
         public double GetValue(string name)
