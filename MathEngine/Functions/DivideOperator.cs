@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MathEngine.Functions
 {
@@ -12,6 +10,14 @@ namespace MathEngine.Functions
 
         public string Name => "/";
 
-        public double Evaluate(double left, double right) => left / right;
+        public double Evaluate(double left, double right)
+        {
+            if (right == 0)
+            {
+                throw new DivideByZeroException($"{left} / {right}");
+            }
+
+            return left / right;
+        }
     }
 }

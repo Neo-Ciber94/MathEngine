@@ -25,7 +25,7 @@ namespace MathEngine.Utils
         {
             get
             {
-                if(pos == length)
+                if (pos == length)
                 {
                     return null;
                 }
@@ -36,7 +36,7 @@ namespace MathEngine.Utils
 
         public char? Read()
         {
-            if(pos == length)
+            if (pos == length)
             {
                 return Current;
             }

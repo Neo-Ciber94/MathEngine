@@ -26,7 +26,7 @@ namespace MathEngine
 
         public double ToDouble()
         {
-            if(double.TryParse(Value, out var result))
+            if (double.TryParse(Value, out var result))
             {
                 return result;
             }

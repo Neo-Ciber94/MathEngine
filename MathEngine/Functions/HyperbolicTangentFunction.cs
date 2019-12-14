@@ -3,14 +3,14 @@ using MathEngine.Utils;
 
 namespace MathEngine.Functions
 {
-    public sealed class SineFunction : IFunction
+    public sealed class HyperbolicTangentFunction : IFunction
     {
-        public string Name => "Sin";
+        public string Name => "Tanh";
 
         public double Call(ReadOnlySpan<double> args)
         {
             Check.ArgumentCount(1, args.Length);
-            return Math.Sin(args[0]);
+            return Math.Tanh(args[0]);
         }
     }
 }

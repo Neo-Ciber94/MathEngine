@@ -10,7 +10,7 @@ namespace MathEngine.Utils
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ArgumentCount(int expected, int actual)
         {
-            if(expected != actual)
+            if (expected != actual)
             {
                 throw new ArgumentException($"Invalid number of arguments, {expected} but {actual} was get.");
             }

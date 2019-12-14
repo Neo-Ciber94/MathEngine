@@ -35,6 +35,7 @@ namespace MathEngineTests
         {
             var op = MathContext.Default.GetBinaryOperator("/");
             Assert.AreEqual(20, op.Evaluate(100, 5));
+            Assert.Throws<DivideByZeroException>(() => op.Evaluate(1, 0));
         }
 
         [Test]
@@ -64,6 +65,8 @@ namespace MathEngineTests
         {
             var op = MathContext.Default.GetUnaryOperator("!");
             Assert.AreEqual(720, op.Evaluate(6));
+            Assert.AreEqual(1, op.Evaluate(0));
+            Assert.Throws<ArithmeticException>(() => op.Evaluate(-30));
         }
 
         [Test]
@@ -148,6 +151,132 @@ namespace MathEngineTests
         {
             var func = MathContext.Default.GetFunction("cot");
             Assert.AreEqual(1 / Math.Tan(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicSineTest()
+        {
+            var func = MathContext.Default.GetFunction("sinh");
+            Assert.AreEqual(Math.Sinh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicCosineTest()
+        {
+            var func = MathContext.Default.GetFunction("cosh");
+            Assert.AreEqual(Math.Cosh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicTangentTest()
+        {
+            var func = MathContext.Default.GetFunction("tanh");
+            Assert.AreEqual(Math.Tanh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicCosecantTest()
+        {
+            var func = MathContext.Default.GetFunction("csch");
+            Assert.AreEqual(1 / Math.Sinh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicSecantTest()
+        {
+            var func = MathContext.Default.GetFunction("sech");
+            Assert.AreEqual(1 / Math.Cosh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicCotangentTest()
+        {
+            var func = MathContext.Default.GetFunction("coth");
+            Assert.AreEqual(1 / Math.Tanh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusSineTest()
+        {
+            var func = MathContext.Default.GetFunction("asin");
+            Assert.AreEqual(Math.Asin(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusCosineTest()
+        {
+            var func = MathContext.Default.GetFunction("acos");
+            Assert.AreEqual(Math.Acos(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusTangentTest()
+        {
+            var func = MathContext.Default.GetFunction("atan");
+            Assert.AreEqual(Math.Atan(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusCosecantTest()
+        {
+            var func = MathContext.Default.GetFunction("acsc");
+            Assert.AreEqual(1 / Math.Asin(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusSecantTest()
+        {
+            var func = MathContext.Default.GetFunction("asec");
+            Assert.AreEqual(1 / Math.Acos(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void ArcusCotangentTest()
+        {
+            var func = MathContext.Default.GetFunction("acot");
+            Assert.AreEqual(1 / Math.Atan(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusSineTest()
+        {
+            var func = MathContext.Default.GetFunction("asinh");
+            Assert.AreEqual(Math.Asinh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusCosineTest()
+        {
+            var func = MathContext.Default.GetFunction("acosh");
+            Assert.AreEqual(Math.Acosh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusTangentTest()
+        {
+            var func = MathContext.Default.GetFunction("atanh");
+            Assert.AreEqual(Math.Atanh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusCosecantTest()
+        {
+            var func = MathContext.Default.GetFunction("acsch");
+            Assert.AreEqual(1 / Math.Asinh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusSecantTest()
+        {
+            var func = MathContext.Default.GetFunction("asech");
+            Assert.AreEqual(1 / Math.Acosh(45), func.Call(new double[] { 45 }), Delta);
+        }
+
+        [Test]
+        public void HyperbolicArcusCotangentTest()
+        {
+            var func = MathContext.Default.GetFunction("acoth");
+            Assert.AreEqual(1 / Math.Atanh(45), func.Call(new double[] { 45 }), Delta);
         }
     }
 }

@@ -129,7 +129,7 @@ namespace MathEngine
 
         public IFunction GetFunction(string functionName)
         {
-            if(TryGetFunction(functionName, out var func))
+            if (TryGetFunction(functionName, out var func))
             {
                 return func;
             }

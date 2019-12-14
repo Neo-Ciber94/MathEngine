@@ -1,14 +1,14 @@
-﻿using MathEngine.Functions;
-using MathEngine.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MathEngine.Functions;
+using MathEngine.Utils;
 
 namespace MathEngine
 {
     public static class MathEvaluator
     {
         public static double Evaluate(string expression) => Evaluate(expression, Tokenizer.Default);
-        
+
         public static double Evaluate(string expression, ITokenizer tokenizer)
         {
             var context = tokenizer.Context;
@@ -16,7 +16,7 @@ namespace MathEngine
             var rpn = InfixToRPN(tokens, context);
             return Evaluate(rpn, context);
         }
-        
+
         public static double Evaluate(string expression, IMathContext context)
         {
             var tokenizer = new Tokenizer(context);
@@ -24,7 +24,7 @@ namespace MathEngine
             var rpn = InfixToRPN(tokens);
             return Evaluate(rpn, context);
         }
-        
+
         public static double Evaluate(string expression, params (string, double)[] variables)
         {
             var context = new MathContext(variables);
@@ -33,9 +33,9 @@ namespace MathEngine
             var rpn = InfixToRPN(tokens);
             return Evaluate(rpn, context);
         }
-        
+
         public static double Evaluate(Token[] tokens) => Evaluate(tokens, MathContext.Default);
-        
+
         public static double Evaluate(Token[] tokens, IMathContext context)
         {
             Stack<double> values = new Stack<double>();
@@ -96,7 +96,7 @@ namespace MathEngine
                                 int i = length - 1;
                                 double* pointer = stackalloc double[length];
 
-                                while(values.TryPop(out double d))
+                                while (values.TryPop(out double d))
                                 {
                                     pointer[i--] = d;
                                 }

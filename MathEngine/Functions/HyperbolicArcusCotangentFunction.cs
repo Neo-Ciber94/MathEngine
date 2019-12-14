@@ -1,16 +1,16 @@
-﻿using System;
+using System;
 using MathEngine.Utils;
 
 namespace MathEngine.Functions
 {
-    public sealed class SineFunction : IFunction
+    public sealed class HyperbolicArcusCotangentFunction : IFunction
     {
-        public string Name => "Sin";
+        public string Name => "ACoth";
 
         public double Call(ReadOnlySpan<double> args)
         {
             Check.ArgumentCount(1, args.Length);
-            return Math.Sin(args[0]);
+            return 1 / Math.Atanh(args[0]);
         }
     }
 }

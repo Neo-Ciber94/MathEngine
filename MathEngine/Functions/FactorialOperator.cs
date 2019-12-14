@@ -10,13 +10,13 @@ namespace MathEngine.Functions
 
         public double Evaluate(double value)
         {
-            if(value < 0)
+            if (value < 0)
             {
                 throw new ArithmeticException("Cannot apply factorial over a negative number.");
             }
 
             double result = 1;
-            while(value > 0)
+            while (value > 0)
             {
                 result *= (value--);
             }

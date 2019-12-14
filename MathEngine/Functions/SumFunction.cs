@@ -8,7 +8,7 @@ namespace MathEngine.Functions
         public double Call(ReadOnlySpan<double> args)
         {
             double total = 0;
-            foreach(var d in args)
+            foreach (var d in args)
             {
                 total += d;
             }

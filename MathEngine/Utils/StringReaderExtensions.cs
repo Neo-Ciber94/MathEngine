@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace MathEngine.Utils
 {
@@ -22,7 +19,7 @@ namespace MathEngine.Utils
         public static char? PeekCharOrNull(this StringReader reader)
         {
             int value = reader.Peek();
-            if(value < 0)
+            if (value < 0)
             {
                 return null;
             }

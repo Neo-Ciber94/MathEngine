@@ -15,11 +15,11 @@ namespace MathEngine
 
         public static Token FromParenthesis(char c)
         {
-            if(c == '(')
+            if (c == '(')
             {
                 return OpenParenthesis;
             }
-            else if(c == ')')
+            else if (c == ')')
             {
                 return CloseParenthesis;
             }
@@ -28,5 +28,5 @@ namespace MathEngine
                 throw new ArgumentException($"Given value is not a parenthesis: {c}");
             }
         }
-    } 
+    }
 }
