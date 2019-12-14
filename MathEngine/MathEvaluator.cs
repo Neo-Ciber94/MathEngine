@@ -25,9 +25,9 @@ namespace MathEngine
             return Evaluate(rpn, context);
         }
 
-        public static double Evaluate(string expression, params (string, double)[] variables)
+        public static double Evaluate(string expression, params (string, double)[] values)
         {
-            var context = new MathContext(variables);
+            var context = new MathContext(values);
             var tokenizer = new Tokenizer(context);
             var tokens = tokenizer.GetTokens(expression);
             var rpn = InfixToRPN(tokens);

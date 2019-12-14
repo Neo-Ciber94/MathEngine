@@ -18,43 +18,43 @@ namespace MathEngine
             Default = new MathContext();
         }
 
-        private readonly IReadOnlyDictionary<string, IFunction> _functions;
-        private readonly IReadOnlyDictionary<string, IBinaryOperator> _binaryOperators;
-        private readonly IReadOnlyDictionary<string, IUnaryOperator> _unaryOperators;
-        private readonly IReadOnlyDictionary<string, double> _values;
+        public IReadOnlyDictionary<string, IFunction> Functions { get; }
+        public IReadOnlyDictionary<string, IBinaryOperator> BinaryOperators { get; }
+        public IReadOnlyDictionary<string, IUnaryOperator> UnaryOperators { get; }
+        public IReadOnlyDictionary<string, double> Values { get; }
 
         private MathContext()
         {
-            _functions = GetMathContextFunctions();
-            _binaryOperators = GetMathContextDataOfType<IBinaryOperator>();
-            _unaryOperators = GetMathContextDataOfType<IUnaryOperator>();
-            _values = GetConstantsAndVariables();
+            Functions = GetMathContextFunctions();
+            BinaryOperators = GetMathContextDataOfType<IBinaryOperator>();
+            UnaryOperators = GetMathContextDataOfType<IUnaryOperator>();
+            Values = GetConstantsAndVariables();
         }
 
-        public MathContext(params (string, double)[] variables)
+        public MathContext(params (string, double)[] values)
         {
-            var defaultInstance = MathContext.Default;
-            _functions = defaultInstance._functions;
-            _binaryOperators = defaultInstance._binaryOperators;
-            _unaryOperators = defaultInstance._unaryOperators;
+            Functions = Default.Functions;
+            BinaryOperators = Default.BinaryOperators;
+            UnaryOperators = Default.UnaryOperators;
+            Values = GetConstantsAndVariables(values);
+        }
 
-            var dictionary = GetConstantsAndVariables() as Dictionary<string, double>;
-            foreach (var e in variables)
+        private static IReadOnlyDictionary<string, double> GetConstantsAndVariables(params (string, double)[] variables)
+        {
+            var builder = ImmutableDictionary.CreateBuilder<string, double>(StringIgnoreCaseEqualityComparer.Instance);
+            builder.Add("pi", Math.PI);
+            builder.Add("e", Math.E);
+            builder.Add("infinity", double.PositiveInfinity);
+
+            if(variables.Length > 0)
             {
-                dictionary!.Add(e.Item1, e.Item2);
+                foreach(var e in variables)
+                {
+                    builder.Add(e.Item1, e.Item2);
+                }
             }
 
-            _values = dictionary!;
-        }
-
-        private static IReadOnlyDictionary<string, double> GetConstantsAndVariables()
-        {
-            return new Dictionary<string, double>(StringIgnoreCaseEqualityComparer.Instance)
-            {
-                { "pi", Math.PI },
-                { "e", Math.E },
-                { "infinity", double.PositiveInfinity }
-            };
+            return builder.ToImmutable();
         }
 
         private static IReadOnlyDictionary<string, IFunction> GetMathContextFunctions()
@@ -92,17 +92,17 @@ namespace MathEngine
             return types.Where(t => t.GetInterfaces().Where(s => typeof(T).IsAssignableFrom(s)).Count() == 1);
         }
 
-        public bool IsFunction(string functionName) => _functions.ContainsKey(functionName);
+        public bool IsFunction(string functionName) => Functions.ContainsKey(functionName);
 
-        public bool IsBinaryOperator(string symbol) => _binaryOperators.ContainsKey(symbol);
+        public bool IsBinaryOperator(string symbol) => BinaryOperators.ContainsKey(symbol);
 
-        public bool IsUnaryOperator(string symbol) => _unaryOperators.ContainsKey(symbol);
+        public bool IsUnaryOperator(string symbol) => UnaryOperators.ContainsKey(symbol);
 
-        public bool IsVariableOrConstant(string name) => _values.ContainsKey(name);
+        public bool IsVariableOrConstant(string name) => Values.ContainsKey(name);
 
         public bool TryGetFunction(string functionName, [NotNullWhen(true)] out IFunction? func)
         {
-            return _functions.TryGetValue(functionName, out func);
+            return Functions.TryGetValue(functionName, out func);
         }
 
         public bool TryGetInfixFunction(string functionName, [NotNullWhen(true)] out IInfixFunction? func)
@@ -119,12 +119,12 @@ namespace MathEngine
 
         public bool TryGetBinaryOperator(string symbol, [NotNullWhen(true)] out IBinaryOperator? op)
         {
-            return _binaryOperators.TryGetValue(symbol, out op);
+            return BinaryOperators.TryGetValue(symbol, out op);
         }
 
         public bool TryGetUnaryOperator(string symbol, [NotNullWhen(true)] out IUnaryOperator? op)
         {
-            return _unaryOperators.TryGetValue(symbol, out op);
+            return UnaryOperators.TryGetValue(symbol, out op);
         }
 
         public IFunction GetFunction(string functionName)
@@ -169,7 +169,7 @@ namespace MathEngine
 
         public double GetValue(string name)
         {
-            if (_values.TryGetValue(name, out var result))
+            if (Values.TryGetValue(name, out var result))
             {
                 return result;
             }

@@ -9,7 +9,7 @@ namespace MathEngine.Functions
 
         public double Call(ReadOnlySpan<double> args)
         {
-            Check.ArgumentCount(1, args.Length);
+            Require.ArgumentCount(1, args.Length);
             return Math.Tanh(args[0]);
         }
     }

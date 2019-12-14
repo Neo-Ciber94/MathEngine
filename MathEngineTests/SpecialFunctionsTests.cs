@@ -12,6 +12,7 @@ namespace MathEngineTests
         {
             var func = MathContext.Default.GetFunction("max");
             Assert.AreEqual(30, func.Call(new double[] { 14, 30 }));
+            Assert.AreEqual(25, func.Call(new double[] { 4, 10, 25, 12 }));
         }
 
         [Test]
@@ -19,6 +20,7 @@ namespace MathEngineTests
         {
             var func = MathContext.Default.GetFunction("min");
             Assert.AreEqual(14, func.Call(new double[] { 14, 30 }));
+            Assert.AreEqual(4, func.Call(new double[] { 4, 10, 25, 12 }));
         }
 
         [Test]
