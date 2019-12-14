@@ -2,7 +2,20 @@
 
 namespace MathEngine.Functions
 {
-    public enum OperatorAssociativity { Right, Left }
+    /// <summary>
+    /// Represents how operators of the same precedence will be grouped in the absent of parentheses.
+    /// </summary>
+    public enum OperatorAssociativity 
+    {
+        /// <summary>
+        /// Associate operators from right to left. Used for exponentiation.
+        /// </summary>
+        Right,
+        /// <summary>
+        /// Associate operators from left to right. Used for addition, substraction, multiplication and division.
+        /// </summary>
+        Left
+    }
     public interface IBinaryOperator : IFunction
     {
         public int Precedence { get; }
