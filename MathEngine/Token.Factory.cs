@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MathEngine
 {
@@ -12,6 +13,8 @@ namespace MathEngine
         {
             return new Token(d.ToString(), TokenType.Number);
         }
+
+        public static Token ArgCount(int n) => new Token(n.ToString(), TokenType.ArgCount);
 
         public static Token FromParenthesis(char c)
         {
@@ -27,6 +30,22 @@ namespace MathEngine
             {
                 throw new ArgumentException($"Given value is not a parenthesis: {c}");
             }
+        }
+    }
+
+    public static class TokenExtensions
+    {
+        public static string[] ToStringExpression(this IEnumerable<Token> tokens)
+        {
+            List<string> list = new List<string>();
+            foreach(var t in tokens)
+            {
+                if(t.Type != TokenType.ArgCount)
+                {
+                    list.Add(t.Value);
+                }
+            }
+            return list.ToArray();
         }
     }
 }

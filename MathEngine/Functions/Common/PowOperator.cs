@@ -4,7 +4,7 @@ namespace MathEngine.Functions.Common
 {
     public sealed class PowOperator : IBinaryOperator
     {
-        public int Precedence => 2;
+        public int Precedence => OperatorPrecedence.High;
 
         public OperatorAssociativity Associativity => OperatorAssociativity.Right;
 

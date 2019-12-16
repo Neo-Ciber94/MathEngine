@@ -14,7 +14,7 @@ namespace MathEngine.Tests
             var expected = new string[] { "10", "+", "5", "*", "2" };
 
             Assert.AreEqual(5, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, Extensions.TokensToString(result), Extensions.CollectionToString(result));
+            CollectionAssert.AreEqual(expected, Extensions.ToStringExpression(result), Extensions.CollectionToString(result));
 
             Assert.AreEqual(new Token("10", TokenType.Number), result[0]);
             Assert.AreEqual(new Token("+", TokenType.BinaryOperator), result[1]);
@@ -30,7 +30,7 @@ namespace MathEngine.Tests
             var expected = new string[] { "5", "+", "-", "2"};
 
             Assert.AreEqual(4, result.Length);
-            CollectionAssert.AreEqual(expected, result.TokensToString(), result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
 
             Assert.AreEqual(new Token("5", TokenType.Number), result[0]);
             Assert.AreEqual(new Token("+", TokenType.BinaryOperator), result[1]);
@@ -45,7 +45,7 @@ namespace MathEngine.Tests
             var expected = new string[] { "max", "(", "5", "+", "2", "*", "1", ",", "3", "/", "-", "2", ")"};
 
             Assert.AreEqual(13, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, Extensions.TokensToString(result), Extensions.CollectionToString(result));
+            CollectionAssert.AreEqual(expected, Extensions.ToStringExpression(result), Extensions.CollectionToString(result));
 
             Assert.AreEqual(new Token("max", TokenType.Function), result[0]);
             Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[1]);
@@ -69,7 +69,7 @@ namespace MathEngine.Tests
             var expected = new string[] { "-", "(", "10", "+", "(", "-", "2", ")", ")"};
 
             Assert.AreEqual(9, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, Extensions.TokensToString(result), Extensions.CollectionToString(result));
+            CollectionAssert.AreEqual(expected, Extensions.ToStringExpression(result), Extensions.CollectionToString(result));
 
             Assert.AreEqual(new Token("-", TokenType.UnaryOperator), result[0]);
             Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[1]);
@@ -93,7 +93,7 @@ namespace MathEngine.Tests
             };
 
             Assert.AreEqual(10, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, result.TokensToString(), result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
 
             Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[0]);
             Assert.AreEqual(new Token("10", TokenType.Number), result[1]);
@@ -115,7 +115,7 @@ namespace MathEngine.Tests
             var expected = new string[]{ "(", "5", "*", "2", ")", "+", "1"};
 
             Assert.AreEqual(7, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, result.TokensToString(), result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
 
             Assert.AreEqual(new Token("(", TokenType.Parenthesis), result[0]);
             Assert.AreEqual(new Token("5", TokenType.Number), result[1]);
@@ -134,7 +134,7 @@ namespace MathEngine.Tests
             var expected = new string[] { "5", "/", "-", "2" };
 
             Assert.AreEqual(4, result.Length, result.CollectionToString(s => s.Value));
-            CollectionAssert.AreEqual(expected, result.TokensToString(), result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
 
             Assert.AreEqual(new Token("5", TokenType.Number), result[0]);
             Assert.AreEqual(new Token("/", TokenType.BinaryOperator), result[1]);

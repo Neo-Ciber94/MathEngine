@@ -1,12 +1,13 @@
+﻿
 namespace MathEngine.Functions.Common
 {
-    public sealed class MultiplyOperator : IBinaryOperator
+    public sealed class TimesInfixFunction : IInfixFunction
     {
         public int Precedence => OperatorPrecedence.Normal;
 
         public OperatorAssociativity Associativity => OperatorAssociativity.Left;
 
-        public string Name => "*";
+        public string Name => "Times";
 
         public double Evaluate(double left, double right) => left * right;
     }

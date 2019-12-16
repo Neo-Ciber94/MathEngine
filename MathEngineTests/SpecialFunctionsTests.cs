@@ -7,6 +7,31 @@ namespace MathEngineTests
     [TestFixture]
     public class SpecialFunctionsTests
     {
+        private const double Delta = 0.00001;
+
+        [Test]
+        public void LogTest()
+        {
+            var func = MathContext.Default.GetFunction("log");
+            Assert.AreEqual(1.39794000867, func.Call(new double[] { 25 }), Delta);
+            
+        }
+
+        [Test]
+        public void LnTest()
+        {
+            var func = MathContext.Default.GetFunction("ln");
+            Assert.AreEqual(3.21887582487, func.Call(new double[] { 25 }), Delta);
+        }
+
+
+        [Test]
+        public void SqrtTest()
+        {
+            var func = MathContext.Default.GetFunction("sqrt");
+            Assert.AreEqual(5, func.Call(new double[] { 25 }));
+        }
+
         [Test]
         public void MaxTest()
         {

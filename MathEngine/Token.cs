@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MathEngine
 {
-    public enum TokenType { Number, BinaryOperator, UnaryOperator, Function, Variable, Parenthesis, Comma, Unknown }
+    public enum TokenType { Number, BinaryOperator, UnaryOperator, Function, Variable, Parenthesis, Comma, ArgCount, Unknown }
 
     public partial class Token : IEquatable<Token>
     {

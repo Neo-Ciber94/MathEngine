@@ -2,7 +2,7 @@ namespace MathEngine.Functions.Common
 {
     public class SubstractOperator : IBinaryOperator
     {
-        public int Precedence => 0;
+        public int Precedence => OperatorPrecedence.Low;
 
         public OperatorAssociativity Associativity => OperatorAssociativity.Left;
 

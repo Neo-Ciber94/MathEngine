@@ -34,7 +34,7 @@ namespace MathEngine
             }
 
             List<Token> tokens = new List<Token>();
-            StringScanner scanner = new StringScanner(expression.RemoveWhiteSpaces()); //TODO: Handle whitespaces within this method
+            StringScanner scanner = new StringScanner(expression.RemoveWhiteSpaces()); //TODO: handle whitespaces in a more eficient way
             IMathContext context = Context;
             char curChar;
 
@@ -42,9 +42,14 @@ namespace MathEngine
             {
                 curChar = (char)scanner.Read()!;
 
-                if (curChar == '+' || curChar == '-')
+                //while (char.IsWhiteSpace(curChar))
+                //{
+                //    curChar = (char)scanner.Read()!;
+                //}
+
+                if (context.IsUnaryOperator(curChar))
                 {
-                    if (IsUnaryOperator(curChar, scanner.Prev, scanner.Next))
+                    if (IsUnaryOperator(scanner.Prev, scanner.Next))
                     {
                         tokens.Add(new Token(curChar, TokenType.UnaryOperator));
                         continue;
@@ -104,7 +109,7 @@ namespace MathEngine
                         sb.Append(curChar);
                         char? nextChar = scanner.Next;
 
-                        if (nextChar == null || !char.IsDigit(nextChar.Value) || (curChar == '.' || hasDecimalPoint))
+                        if (nextChar == null || !(char.IsDigit(nextChar.Value) || (nextChar == '.' && !hasDecimalPoint)))
                         {
                             break;
                         }
@@ -125,14 +130,9 @@ namespace MathEngine
             return tokens.ToArray();
         }
 
-        private static bool IsUnaryOperator(char curChar, char? prevChar, char? nextChar)
+        private bool IsUnaryOperator(char? prevChar, char? nextChar)
         {
-            if (!(curChar != '+' || curChar != '-'))
-            {
-                return false;
-            }
-
-            if (prevChar != null && (char.IsLetterOrDigit(prevChar.Value) || prevChar == '.' || prevChar == ')'))
+            if (prevChar != null && prevChar != ',' && (char.IsLetterOrDigit(prevChar.Value) || prevChar == '.' || prevChar == ')'))
             {
                 return false;
             }

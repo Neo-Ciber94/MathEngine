@@ -7,7 +7,7 @@ namespace MathEngine.Tests
 {
     public static class Extensions
     {
-        public static string[] TokensToString(this ICollection<Token> tokens)
+        public static string[] ToStringExpression(this ICollection<Token> tokens)
         {
             List<string> str = new List<string>(tokens.Count);
 

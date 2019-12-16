@@ -9,22 +9,22 @@ namespace MathEngine.Functions
         /// <summary>
         /// A lower precedence than addition and substraction.
         /// </summary>
-        public const int VeryLow = -1;
+        public const int VeryLow = 0;
         /// <summary>
         /// Low precedence, used for addition and substraction.
         /// </summary>
-        public const int Low = 0;
+        public const int Low = 1;
         /// <summary>
         /// Normal precedence used for multiplication and division.
         /// </summary>
-        public const int Normal = 1;
+        public const int Normal = 2;
         /// <summary>
         /// High precedence used for exponentiation.
         /// </summary>
-        public const int High = 2;
+        public const int High = 3;
         /// <summary>
         /// A higher precedence than exponentiation.
         /// </summary>
-        public const int VeryHigh = 3;
+        public const int VeryHigh = 4;
     }
 }

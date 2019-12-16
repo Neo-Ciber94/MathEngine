@@ -7,8 +7,6 @@ namespace MathEngineTests
     [TestFixture]
     public class ArithmeticOperatorsTests
     {
-        private const double Delta = 0.00001;
-
         [Test]
         public void AddTest()
         {
@@ -67,27 +65,6 @@ namespace MathEngineTests
             Assert.AreEqual(720, op.Evaluate(6));
             Assert.AreEqual(1, op.Evaluate(0));
             Assert.Throws<ArithmeticException>(() => op.Evaluate(-30));
-        }
-
-        [Test]
-        public void ModuloTest()
-        {
-            var op = MathContext.Default.GetInfixFunction("mod");
-            Assert.AreEqual(3, op.Evaluate(15, 4));
-        }
-
-        [Test]
-        public void LogTest()
-        {
-            var func = MathContext.Default.GetFunction("log");
-            Assert.AreEqual(Math.Log(25), func.Call(new double[] { 25 }), Delta);
-        }
-
-        [Test]
-        public void SqrtTest()
-        {
-            var func = MathContext.Default.GetFunction("sqrt");
-            Assert.AreEqual(5, func.Call(new double[] { 25 }));
         }
     }
 }

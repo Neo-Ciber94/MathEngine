@@ -11,7 +11,7 @@ namespace MathEngine.Functions.Common
         {
             if (args.Length == 1)
             {
-                return Math.Log(args[0]);
+                return Math.Log10(args[0]);
             }
             else if (args.Length == 2)
             {

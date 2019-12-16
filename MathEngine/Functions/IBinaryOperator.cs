@@ -1,4 +1,5 @@
 ﻿using System;
+using MathEngine.Utils;
 
 namespace MathEngine.Functions
 {
@@ -16,20 +17,38 @@ namespace MathEngine.Functions
         /// </summary>
         Left
     }
+
+    /// <summary>
+    /// Represents an operation performed over 2 values.
+    /// </summary>
+    /// <seealso cref="MathEngine.Functions.IFunction" />
     public interface IBinaryOperator : IFunction
     {
+        /// <summary>
+        /// Gets a value indicating the order which this operation will be performed.
+        /// Is recomended to use <see cref="MathEngine.Functions.OperatorPrecedence"/> constants values for implement this property.
+        /// <para></para>
+        /// See also: <see href="https://en.wikipedia.org/wiki/Order_of_operations"/>
+        /// </summary>
         public int Precedence { get; }
+        /// <summary>
+        /// Gets a value indicating how operators of the same precedence of this will be grouped in the absent of parentheses.
+        /// <para></para>
+        /// See also: <see href="https://en.wikipedia.org/wiki/Operator_associativity"/>
+        /// </summary>
         public OperatorAssociativity Associativity { get; }
 
+        /// <summary>
+        /// Performs this operation over the given values.
+        /// </summary>
+        /// <param name="left">The left value.</param>
+        /// <param name="right">The right value.</param>
+        /// <returns>The result of this operation.</returns>
         public double Evaluate(double left, double right);
 
         double IFunction.Call(ReadOnlySpan<double> args)
         {
-            if (args.Length != Arity)
-            {
-                throw new ArgumentException($"Invalid number of arguments. {Arity} expected.");
-            }
-
+            Require.ArgumentCount(2, args.Length);
             return Evaluate(args[0], args[1]);
         }
 
