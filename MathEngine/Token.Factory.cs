@@ -4,8 +4,17 @@ namespace MathEngine
 {
     public partial class Token
     {
+        /// <summary>
+        /// An open parenthessis token.
+        /// </summary>
         public static readonly Token OpenParenthesis = new Token('(', TokenType.Parenthesis);
+        /// <summary>
+        /// A close parenthessis token.
+        /// </summary>
         public static readonly Token CloseParenthesis = new Token(')', TokenType.Parenthesis);
+        /// <summary>
+        /// A comma token.
+        /// </summary>
         public static readonly Token Comma = new Token(',', TokenType.Comma);
 
         /// <summary>

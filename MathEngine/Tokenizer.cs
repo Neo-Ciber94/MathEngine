@@ -6,10 +6,20 @@ using MathEngine.Utils;
 
 namespace MathEngine
 {
-    public class Tokenizer : ITokenizer
+    /// <summary>
+    /// A default implementation of the <see cref="ITokenizer"/> interface that provides methods for extract the tokens of an expression.
+    /// </summary>
+    /// <seealso cref="MathEngine.ITokenizer" />
+    public sealed class Tokenizer : ITokenizer
     {
         private static Tokenizer? _default;
 
+        /// <summary>
+        /// Gets the default <see cref="ITokenizer"/> that use the default <see cref="IMathContext"/>
+        /// </summary>
+        /// <value>
+        /// The default <see cref="ITokenizer"/>.
+        /// </value>
         public static Tokenizer Default
         {
             get
@@ -23,6 +33,10 @@ namespace MathEngine
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tokenizer"/> class.
+        /// </summary>
+        /// <param name="context">The context to use within this tokenizer.</param>
         public Tokenizer(IMathContext context)
         {
             Context = context;
@@ -126,6 +140,11 @@ namespace MathEngine
             }
         }
 
+        /// <summary>
+        /// Gets an array with all the tokens of the given expression.
+        /// </summary>
+        /// <param name="expression">The expression to split.</param>
+        /// <returns>An array with the tokens of the expression.</returns>
         public static string[] ToStringArray(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))

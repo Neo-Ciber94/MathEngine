@@ -216,6 +216,7 @@ _pkginfo.txt
 # Others
 ClientBin/
 ConsoleApp/
+Ideas.txt
 ~$*
 *~
 *.dbmdl

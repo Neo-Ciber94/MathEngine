@@ -6,7 +6,7 @@
     public interface ITokenizer
     {
         /// <summary>
-        /// The <see cref="IMathContext"/> used for the expression evaluation.
+        /// The <see cref="IMathContext"/> used for expression evaluation.
         /// </summary>
         /// <value>
         /// The context.

@@ -9,18 +9,47 @@ using MathEngine.Functions;
 
 namespace MathEngine
 {
-    public class MathContext : IMathContext
+    /// <summary>
+    /// Provides a default implementation of the <see cref="IMathContext"/> interface.
+    /// </summary>
+    /// <seealso cref="MathEngine.IMathContext" />
+    public sealed class MathContext : IMathContext
     {
-        public static MathContext Default { get; }
+        /// <summary>
+        /// Gets the default <see cref="IMathContext"/>.
+        /// </summary>
+        /// <value>
+        /// The default context.
+        /// </value>
+        public static MathContext Default { get; } = new MathContext();
 
-        static MathContext()
-        {
-            Default = new MathContext();
-        }
-
+        /// <summary>
+        /// Gets all the functions of this context.
+        /// </summary>
+        /// <value>
+        /// The functions.
+        /// </value>
         public IReadOnlyDictionary<string, IFunction> Functions { get; }
+        /// <summary>
+        /// Gets all the binary operators of this context.
+        /// </summary>
+        /// <value>
+        /// The binary operators.
+        /// </value>
         public IReadOnlyDictionary<string, IBinaryOperator> BinaryOperators { get; }
+        /// <summary>
+        /// Gets all the unary operators of this context.
+        /// </summary>
+        /// <value>
+        /// The unary operators.
+        /// </value>
         public IReadOnlyDictionary<string, IUnaryOperator> UnaryOperators { get; }
+        /// <summary>
+        /// Gets all the constants and variables of this context.
+        /// </summary>
+        /// <value>
+        /// The values.
+        /// </value>
         public IReadOnlyDictionary<string, double> Values { get; }
 
         private MathContext()
@@ -31,6 +60,10 @@ namespace MathEngine
             Values = GetMathContextValues();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MathContext"/> class.
+        /// </summary>
+        /// <param name="values">The values to use in this context.</param>
         public MathContext(params (string, double)[] values)
         {
             Functions = Default.Functions;
