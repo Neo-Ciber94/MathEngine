@@ -9,7 +9,7 @@ namespace MathEngine.Functions.Common
 
         public double Call(ReadOnlySpan<double> args)
         {
-            Require.ArgumentCount(1, args.Length);
+            Requires.ArgumentCount(1, args.Length);
             return 1 / Math.Acos(args[0]);
         }
     }

@@ -1,7 +1,7 @@
-﻿using MathEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using MathEngine;
 
-namespace MathEngineTests
+namespace MathEngine.Tests
 {
     [TestFixture]
     public class VariablesAndConstantsTests

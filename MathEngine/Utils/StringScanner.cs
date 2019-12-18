@@ -19,8 +19,11 @@ namespace MathEngine.Utils
         }
 
         public bool HasNext => pos != length;
+        
         public char? Current { get; private set; }
+        
         public char? Prev { get; private set; }
+        
         public char? Next
         {
             get
@@ -44,6 +47,14 @@ namespace MathEngine.Utils
             Prev = Current;
             Current = str[pos++];
             return Current;
+        }
+    }
+
+    public static class StringScannerExtensions
+    {
+        public static char ReadChar(this ref StringScanner reader)
+        {
+            return !reader.HasNext ? default : (char)reader.Read()!;
         }
     }
 }

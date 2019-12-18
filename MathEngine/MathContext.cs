@@ -28,7 +28,7 @@ namespace MathEngine
             Functions = GetMathContextFunctions();
             BinaryOperators = GetMathContextDataOfType<IBinaryOperator>();
             UnaryOperators = GetMathContextDataOfType<IUnaryOperator>();
-            Values = GetConstantsAndVariables();
+            Values = GetMathContextValues();
         }
 
         public MathContext(params (string, double)[] values)
@@ -36,10 +36,10 @@ namespace MathEngine
             Functions = Default.Functions;
             BinaryOperators = Default.BinaryOperators;
             UnaryOperators = Default.UnaryOperators;
-            Values = GetConstantsAndVariables(values);
+            Values = GetMathContextValues(values);
         }
 
-        private static IReadOnlyDictionary<string, double> GetConstantsAndVariables(params (string, double)[] variables)
+        private static IReadOnlyDictionary<string, double> GetMathContextValues(params (string, double)[] variables)
         {
             var builder = ImmutableDictionary.CreateBuilder<string, double>(StringIgnoreCaseEqualityComparer.Instance);
             builder.Add("pi", Math.PI);
@@ -98,7 +98,7 @@ namespace MathEngine
 
         public bool IsUnaryOperator(string symbol) => UnaryOperators.ContainsKey(symbol);
 
-        public bool IsVariableOrConstant(string name) => Values.ContainsKey(name);
+        public bool IsValue(string name) => Values.ContainsKey(name);
 
         public bool TryGetFunction(string functionName, [NotNullWhen(true)] out IFunction? func)
         {

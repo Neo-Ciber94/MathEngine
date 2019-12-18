@@ -1,8 +1,8 @@
 ﻿using System;
-using MathEngine;
 using NUnit.Framework;
+using MathEngine;
 
-namespace MathEngineTests
+namespace MathEngine.Tests
 {
     [TestFixture]
     public class TrigonometricFunctionsTests

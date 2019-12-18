@@ -4,7 +4,7 @@ namespace MathEngine.Utils.Tests
 {
     [TestFixture()]
     public class StringScannerTests
-    {        
+    {
         [Test()]
         public void ReadTest()
         {

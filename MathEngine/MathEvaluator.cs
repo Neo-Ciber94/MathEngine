@@ -47,7 +47,7 @@ namespace MathEngine
                 {
                     values.Push(t.ToDouble());
                 }
-                if (type == TokenType.Variable)
+                if (type == TokenType.Value)
                 {
                     values.Push(context.GetValue(t.Value));
                 }
@@ -155,7 +155,7 @@ namespace MathEngine
                 {
                     values.Push(t.ToDouble());
                 }
-                if (type == TokenType.Variable)
+                if (type == TokenType.Value)
                 {
                     values.Push(context.GetValue(t.Value));
                 }
@@ -262,7 +262,7 @@ namespace MathEngine
                 switch (type)
                 {
                     case TokenType.Number:
-                    case TokenType.Variable:
+                    case TokenType.Value:
                         PushNumber(output, operators, t);
                         break;
                     case TokenType.Function:

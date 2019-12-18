@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace MathEngine.Utils
 {
-    public static class Require
+    public static class Requires
     {
         [Conditional("DEBUG")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

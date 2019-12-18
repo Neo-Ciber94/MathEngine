@@ -1,8 +1,7 @@
 ﻿using System;
-using MathEngine;
 using NUnit.Framework;
 
-namespace MathEngineTests
+namespace MathEngine.Tests
 {
     [TestFixture]
     public class SpecialFunctionsTests
@@ -14,7 +13,7 @@ namespace MathEngineTests
         {
             var func = MathContext.Default.GetFunction("log");
             Assert.AreEqual(1.39794000867, func.Call(new double[] { 25 }), Delta);
-            
+
         }
 
         [Test]

@@ -19,7 +19,7 @@ namespace MathEngine.Functions.Common
             }
             else
             {
-                Require.ArgumentCount(2, args.Length);
+                Requires.ArgumentCount(2, args.Length);
                 return 0;
             }
         }

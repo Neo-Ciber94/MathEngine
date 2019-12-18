@@ -1,6 +1,5 @@
 ﻿using MathEngine.Utils;
 using NUnit.Framework;
-using System.Linq;
 
 namespace MathEngine.Tests
 {
@@ -8,9 +7,9 @@ namespace MathEngine.Tests
     public class TokenizerTests
     {
         [Test()]
-        public void GetTokensTest1()
+        public void GetTokensTest1([Values("10 + 5 * 2", "10+5*2")] string expression)
         {
-            var result = Tokenizer.Default.GetTokens("10 + 5 * 2");
+            var result = Tokenizer.Default.GetTokens(expression);
             var expected = new string[] { "10", "+", "5", "*", "2" };
 
             Assert.AreEqual(5, result.Length, result.CollectionToString(s => s.Value));
@@ -24,10 +23,10 @@ namespace MathEngine.Tests
         }
 
         [Test()]
-        public void GetTokensTest2()
+        public void GetTokensTest2([Values("5 + - 2", "5+-2")] string expression)
         {
-            var result = Tokenizer.Default.GetTokens("5+-2");
-            var expected = new string[] { "5", "+", "-", "2"};
+            var result = Tokenizer.Default.GetTokens("5 + - 2");
+            var expected = new string[] { "5", "+", "-", "2" };
 
             Assert.AreEqual(4, result.Length);
             CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
@@ -42,7 +41,7 @@ namespace MathEngine.Tests
         public void GetTokensTest3()
         {
             var result = Tokenizer.Default.GetTokens("max(5 + 2 * 1, 3 / -2)");
-            var expected = new string[] { "max", "(", "5", "+", "2", "*", "1", ",", "3", "/", "-", "2", ")"};
+            var expected = new string[] { "max", "(", "5", "+", "2", "*", "1", ",", "3", "/", "-", "2", ")" };
 
             Assert.AreEqual(13, result.Length, result.CollectionToString(s => s.Value));
             CollectionAssert.AreEqual(expected, Extensions.ToStringExpression(result), Extensions.CollectionToString(result));
@@ -66,7 +65,7 @@ namespace MathEngine.Tests
         public void GetTokensTest4()
         {
             var result = Tokenizer.Default.GetTokens("-(10+(-2))");
-            var expected = new string[] { "-", "(", "10", "+", "(", "-", "2", ")", ")"};
+            var expected = new string[] { "-", "(", "10", "+", "(", "-", "2", ")", ")" };
 
             Assert.AreEqual(9, result.Length, result.CollectionToString(s => s.Value));
             CollectionAssert.AreEqual(expected, Extensions.ToStringExpression(result), Extensions.CollectionToString(result));
@@ -112,7 +111,7 @@ namespace MathEngine.Tests
         {
             var expression = "(5 * 2) + 1";
             var result = Tokenizer.Default.GetTokens(expression);
-            var expected = new string[]{ "(", "5", "*", "2", ")", "+", "1"};
+            var expected = new string[] { "(", "5", "*", "2", ")", "+", "1" };
 
             Assert.AreEqual(7, result.Length, result.CollectionToString(s => s.Value));
             CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
@@ -138,6 +137,38 @@ namespace MathEngine.Tests
 
             Assert.AreEqual(new Token("5", TokenType.Number), result[0]);
             Assert.AreEqual(new Token("/", TokenType.BinaryOperator), result[1]);
+            Assert.AreEqual(new Token("-", TokenType.UnaryOperator), result[2]);
+            Assert.AreEqual(new Token("2", TokenType.Number), result[3]);
+        }
+
+        [Test()]
+        public void GetTokensTest8()
+        {
+            var expression = "5 > -2";
+            var result = Tokenizer.Default.GetTokens(expression);
+            var expected = new string[] { "5", ">", "-", "2" };
+
+            Assert.AreEqual(4, result.Length, result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
+
+            Assert.AreEqual(new Token("5", TokenType.Number), result[0]);
+            Assert.AreEqual(new Token(">", TokenType.Unknown), result[1]);
+            Assert.AreEqual(new Token("-", TokenType.UnaryOperator), result[2]);
+            Assert.AreEqual(new Token("2", TokenType.Number), result[3]);
+        }
+
+        [Test()]
+        public void GetTokensTest9()
+        {
+            var expression = "5 any2 -2".RemoveWhiteSpaces();
+            var result = Tokenizer.Default.GetTokens(expression);
+            var expected = new string[] { "5", "any2", "-", "2" };
+
+            Assert.AreEqual(4, result.Length, result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
+
+            Assert.AreEqual(new Token("5", TokenType.Number), result[0]);
+            Assert.AreEqual(new Token("any2", TokenType.Unknown), result[1]);
             Assert.AreEqual(new Token("-", TokenType.UnaryOperator), result[2]);
             Assert.AreEqual(new Token("2", TokenType.Number), result[3]);
         }

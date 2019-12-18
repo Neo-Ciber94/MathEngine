@@ -1,8 +1,7 @@
-﻿using NUnit.Framework;
-using MathEngine;
-using MathEngine.Utils;
+﻿using System;
 using System.Linq;
-using System;
+using MathEngine.Utils;
+using NUnit.Framework;
 
 namespace MathEngine.Tests
 {
@@ -30,7 +29,7 @@ namespace MathEngine.Tests
 
             //10 5 - 2 * +
             var expected = new string[] { "10", "5", "-", "2", "*", "+" };
-            Assert.AreEqual(expected, TokenExtensions.ToStringExpression(rpn), "{0}\n{1}", rpn.CollectionToString(s => s.Value), rpn.CollectionToString());
+            Assert.AreEqual(expected, TokenExtensions.ToStringArray(rpn), "{0}\n{1}", rpn.CollectionToString(s => s.Value), rpn.CollectionToString());
         }
 
         [Test()]
@@ -41,7 +40,7 @@ namespace MathEngine.Tests
 
             // 10 4 - 2 6 + max
             var expected = new string[] { "10", "4", "-", "2", "6", "+", "max" };
-            Assert.AreEqual(expected, TokenExtensions.ToStringExpression(rpn), "{0}\n{1}", rpn.CollectionToString(s => s.Value), rpn.CollectionToString());
+            Assert.AreEqual(expected, TokenExtensions.ToStringArray(rpn), "{0}\n{1}", rpn.CollectionToString(s => s.Value), rpn.CollectionToString());
         }
 
         [Test()]

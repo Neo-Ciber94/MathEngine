@@ -9,7 +9,7 @@ namespace MathEngine
         public bool IsFunction(string functionName);
         public bool IsBinaryOperator(string symbol);
         public bool IsUnaryOperator(string symbol);
-        public bool IsVariableOrConstant(string name);
+        public bool IsValue(string name);
         public bool IsBinaryOperator(char symbol) => IsBinaryOperator(symbol.ToString());
         public bool IsUnaryOperator(char symbol) => IsUnaryOperator(symbol.ToString());
         public bool TryGetFunction(string functionName, [NotNullWhen(returnValue: true)] out IFunction? func);

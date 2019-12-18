@@ -1,13 +1,7 @@
-﻿using MathEngine;
+﻿using System;
 using NUnit.Framework;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MathEngineTests
+namespace MathEngine.Tests
 {
     [TestFixture]
     public class MathEvaluatorTests
@@ -38,7 +32,7 @@ namespace MathEngineTests
             Assert.AreEqual(453, MathEvaluator.Evaluate("3 + (3 * 5)^ 2 * 2"));
             Assert.AreEqual(121, MathEvaluator.Evaluate("( 5 + 6 )^2"));
             Assert.AreEqual(-61, MathEvaluator.Evaluate("56 - ((-2) * 4) + (-(5^3))"));
-            
+
             Assert.AreEqual(1968.7, MathEvaluator.Evaluate("(3 ^ 9 + 2 * 3 * 4) / 10.0 - 2"), Delta);
             Assert.AreEqual(25.5 * 3.666, MathEvaluator.Evaluate("25.5 * 3.666"), Delta);
             Assert.AreEqual(21.333, MathEvaluator.Evaluate("0.333 + (5 ^ 2) - 10 / 2.5"), Delta);
@@ -68,7 +62,15 @@ namespace MathEngineTests
         [Test]
         public void Test6()
         {
-            //ToRadians(50), ToDegrees(60)
+            Assert.AreEqual(719, MathEvaluator.Evaluate("1 + 6! - 2"));
+            Assert.AreEqual(729, MathEvaluator.Evaluate("10 + 6! - 1"));
+        }
+
+        [Test]
+        public void Test7()
+        {
+            Assert.AreEqual(-20, MathEvaluator.Evaluate("10*-2"));
+            Assert.AreEqual(-10, MathEvaluator.Evaluate("50/-5"));
         }
     }
 }

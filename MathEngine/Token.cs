@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MathEngine
 {
-    public enum TokenType { Number, BinaryOperator, UnaryOperator, Function, Variable, Parenthesis, Comma, ArgCount, Unknown }
+    public enum TokenType { Number, Value, BinaryOperator, UnaryOperator, Function, Parenthesis, Comma, ArgCount, Unknown }
 
     public partial class Token : IEquatable<Token>
     {
@@ -31,7 +31,7 @@ namespace MathEngine
                 return result;
             }
 
-            throw new FormatException($"Cannot convert the specified value to double: {Value}.");
+            throw new FormatException($"Cannot convert the specified value to double: {Value}");
         }
 
         public override string ToString()
