@@ -30,115 +30,100 @@ namespace MathEngine
 
         public IMathContext Context { get; }
 
-        public Token[] _GetTokens(string expression)
+        public Token[] GetTokens(string expression)
         {
-            if (string.IsNullOrWhiteSpace(expression))
+            var array = ToStringArray(expression);
+            return GetTokensInternal(array);
+        }
+        
+        private Token[] GetTokensInternal(string[] arr)
+        {
+            if(arr.Length == 0)
             {
-                if (expression == null)
-                {
-                    throw new ArgumentNullException(nameof(expression));
-                }
-
                 return Array.Empty<Token>();
             }
 
-            List<Token> tokens = new List<Token>();
-            StringScanner scanner = new StringScanner(expression);
+            List<Token> tokens = new List<Token>(arr.Length);
             IMathContext context = Context;
-            char curChar;
+            int length = arr.Length;
 
-            while (scanner.HasNext)
+            for (int i = 0; i < length; i++)
             {
-                curChar = (char)scanner.Read()!;
+                string current = arr[i];
 
-                while (char.IsWhiteSpace(curChar))
+                if (IsNumber(current))
                 {
-                    curChar = (char)scanner.Read()!;
+                    tokens.Add(new Token(current, TokenType.Number));
                 }
-
-                if (context.IsUnaryOperator(curChar))
+                else if (context.IsValue(current))
                 {
-                    if (IsUnaryOperator(curChar, scanner.Prev, scanner.Next))
+                    tokens.Add(new Token(current, TokenType.Value));
+                }
+                else if (context.IsFunction(current))
+                {
+                    tokens.Add(new Token(current, TokenType.Function));
+                }
+                else if (context.IsBinaryOperator(current) || context.IsUnaryOperator(current))
+                {
+                    string? prev = i > 0 ? arr[i - 1] : null;
+                    string? next = i < length - 1 ? arr[i + 1] : null;
+
+                    if (IsUnaryOperator(current, prev, next))
                     {
-                        tokens.Add(new Token(curChar, TokenType.UnaryOperator));
-                        continue;
+                        tokens.Add(new Token(current, TokenType.UnaryOperator));
+                    }
+                    else
+                    {
+                        tokens.Add(new Token(current, TokenType.BinaryOperator));
                     }
                 }
-
-                if (context.IsBinaryOperator(curChar))
+                else if (current == "(" || current == ")")
                 {
-                    tokens.Add(new Token(curChar, TokenType.BinaryOperator));
+                    tokens.Add(Token.FromParenthesis(current[0]));
                 }
-                else if (curChar == '(' || curChar == ')')
-                {
-                    tokens.Add(Token.FromParenthesis(curChar));
-                }
-                else if (curChar == ',')
+                else if (current == ",")
                 {
                     tokens.Add(Token.Comma);
                 }
-                else if (char.IsLetter(curChar))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    while (true)
-                    {
-                        sb.Append(curChar);
-                        char? nextChar = scanner.Next;
-                        if(nextChar != null && char.IsLetterOrDigit(nextChar.Value))
-                        {
-                            curChar = scanner.ReadChar();
-                        }
-                        else
-                        {
-                            break;
-                        }                        
-                    };
-
-                    string value = sb.ToString();
-                    TokenType type = value switch
-                    {
-                        var n when context.IsFunction(n) => TokenType.Function,
-                        var n when context.IsValue(n) => TokenType.Value,
-                        _ => TokenType.Unknown
-                    };
-
-                    tokens.Add(new Token(value, type));
-                }
-                else if (char.IsDigit(curChar))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    bool hasDecimalPoint = false;
-                    while (true)
-                    {
-                        if (curChar == '.')
-                        {
-                            hasDecimalPoint = true;
-                        }
-
-                        sb.Append(curChar);
-                        char? nextChar = scanner.Next;
-
-                        if (nextChar != null && (char.IsDigit(nextChar.Value) || (nextChar == '.' && !hasDecimalPoint)))
-                        {
-                            curChar = scanner.ReadChar();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    string s = sb.ToString();
-                    TokenType type = s.EndsWith('.') || s.StartsWith('.') ? TokenType.Unknown : TokenType.Number;
-                    tokens.Add(new Token(s, type));
-                }
                 else
                 {
-                    tokens.Add(new Token(curChar, TokenType.Unknown));
+                    tokens.Add(new Token(current, TokenType.Unknown));
                 }
+
             }
 
             return tokens.ToArray();
+        }
+
+        private bool IsUnaryOperator(string current, string? prev, string? next)
+        {
+            IMathContext context = Context;
+
+            if (!context.TryGetUnaryOperator(current, out var op))
+            {
+                return false;
+            }
+
+            if (op.Notation == OperatorNotation.Prefix)
+            {
+                if (prev != null && (prev == ")" 
+                    || IsNumber(prev) 
+                    || context.IsValue(prev) 
+                    || (context.IsUnaryOperator(prev) && !context.IsBinaryOperator(prev))))
+                {
+                    return false;
+                }
+
+                return next != null && !IsValidOperator(next[0]) && (next == "(" || char.IsLetterOrDigit(next[0]));
+            }
+            else if (op.Notation == OperatorNotation.Postfix)
+            {
+                return prev != null && (prev == ")" || IsNumber(prev) || context.IsValue(prev));
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static string[] ToStringArray(string expression)
@@ -218,130 +203,6 @@ namespace MathEngine
 
 
             return tokens.ToArray();
-        }
-
-        public Token[] GetTokens(string expression)
-        {
-            var array = ToStringArray(expression);
-            return GetTokensInternal(array);
-        }
-        
-        private Token[] GetTokensInternal(string[] arr)
-        {
-            if(arr.Length == 0)
-            {
-                return Array.Empty<Token>();
-            }
-
-            List<Token> tokens = new List<Token>(arr.Length);
-            IMathContext context = Context;
-            int length = arr.Length;
-
-            for (int i = 0; i < length; i++)
-            {
-                string current = arr[i];
-
-                if (IsNumber(current))
-                {
-                    tokens.Add(new Token(current, TokenType.Number));
-                }
-                else if (context.IsValue(current))
-                {
-                    tokens.Add(new Token(current, TokenType.Value));
-                }
-                else if (context.IsFunction(current))
-                {
-                    tokens.Add(new Token(current, TokenType.Function));
-                }
-                else if (context.IsBinaryOperator(current) || context.IsUnaryOperator(current))
-                {
-                    string? prev = i > 0 ? arr[i - 1] : null;
-                    string? next = i < length - 1 ? arr[i + 1] : null;
-
-                    if (IsUnaryOperator(current, prev, next))
-                    {
-                        tokens.Add(new Token(current, TokenType.UnaryOperator));
-                    }
-                    else
-                    {
-                        tokens.Add(new Token(current, TokenType.BinaryOperator));
-                    }
-                }
-                else if (current == "(" || current == ")")
-                {
-                    tokens.Add(Token.FromParenthesis(current[0]));
-                }
-                else if (current == ",")
-                {
-                    tokens.Add(Token.Comma);
-                }
-                else
-                {
-                    tokens.Add(new Token(current, TokenType.Unknown));
-                }
-
-            }
-
-            return tokens.ToArray();
-        }
-
-        private bool IsUnaryOperator(char curChar, char? prevChar, char? nextChar)
-        {
-            var context = Context;
-            if (!context.TryGetUnaryOperator(curChar.ToString(), out var op))
-            {
-                return false;
-            }
-
-            var notation = op.Notation;
-            if (notation == OperatorNotation.Postfix)
-            {
-                return prevChar != null && prevChar != ')' && char.IsLetterOrDigit(prevChar.Value);
-            }
-            else if (notation == OperatorNotation.Prefix)
-            {
-                if (prevChar != null && (char.IsLetterOrDigit(prevChar.Value) || prevChar == '.' || prevChar == ')'))
-                {
-                    return false;
-                }
-
-                return nextChar != null && (char.IsLetterOrDigit(nextChar.Value) || nextChar == '(' || nextChar == '.');
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool IsUnaryOperator(string current, string? prev, string? next)
-        {
-            IMathContext context = Context;
-
-            if (!context.TryGetUnaryOperator(current, out var op))
-            {
-                return false;
-            }
-
-            if (op.Notation == OperatorNotation.Prefix)
-            {
-                if (prev != null && (prev == ")" 
-                    || IsNumber(prev) 
-                    || context.IsValue(prev) 
-                    || (context.IsUnaryOperator(prev) && !context.IsBinaryOperator(prev))))
-                {
-                    return false;
-                }
-
-                return next != null && !IsValidOperator(next[0]) && (next == "(" || char.IsLetterOrDigit(next[0]));
-            }
-            else if (op.Notation == OperatorNotation.Postfix)
-            {
-                return prev != null && (prev == ")" || IsNumber(prev) || context.IsValue(prev));
-            }
-            else
-            {
-                return false;
-            }
         }
 
         private static bool IsValidOperator(char c)

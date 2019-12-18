@@ -10,7 +10,7 @@ namespace MathEngine.Functions.Common
         public double Call(ReadOnlySpan<double> args)
         {
             Requires.ArgumentCount(1, args.Length);
-            return Math.Tanh(args[0]);
+            return Math.Tanh(args[0] * Consts.DegreeToRadians);
         }
     }
 }

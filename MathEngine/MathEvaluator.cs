@@ -36,103 +36,7 @@ namespace MathEngine
 
         public static double Evaluate(Token[] tokens) => Evaluate(tokens, MathContext.Default);
 
-        private static double _Evaluate(Token[] tokens, IMathContext context)
-        {
-            Stack<double> values = new Stack<double>();
-
-            foreach (var t in tokens)
-            {
-                TokenType type = t.Type;
-                if (type == TokenType.Number)
-                {
-                    values.Push(t.ToDouble());
-                }
-                if (type == TokenType.Value)
-                {
-                    values.Push(context.GetValue(t.Value));
-                }
-                else if (type == TokenType.UnaryOperator)
-                {
-                    var op = context.GetUnaryOperator(t.Value);
-                    if (values.TryPop(out double value))
-                    {
-                        double result = op.Evaluate(value);
-                        values.Push(result);
-                    }
-                    else
-                    {
-                        throw new ExpressionEvaluationException(values, tokens);
-                    }
-                }
-                else if (type == TokenType.BinaryOperator)
-                {
-                    var op = context.GetBinaryOperator(t.Value);
-                    if (values.TryPop(out double b) && values.TryPop(out double a))
-                    {
-                        double result = op.Evaluate(a, b);
-                        values.Push(result);
-                    }
-                    else
-                    {
-                        throw new ExpressionEvaluationException(values, tokens);
-                    }
-                }
-                else if (type == TokenType.Function)
-                {
-                    if (context.TryGetFunction(t.Value, out var func))
-                    {
-                        int arity = func!.Arity;
-
-                        if (arity == 0)
-                        {
-                            var empty = ReadOnlySpan<double>.Empty;
-                            values.Push(func.Call(empty));
-                        }
-                        else
-                        {
-                            unsafe
-                            {
-                                int length = arity < 0 ? values.Count : arity;
-                                int i = length - 1;
-                                Span<double> args = stackalloc double[length];
-
-                                while (i >= 0)
-                                {
-                                    if (values.TryPop(out double d))
-                                    {
-                                        args[i--] = d;
-                                    }
-                                    else
-                                    {
-                                        throw new ExpressionEvaluationException(values, tokens);
-                                    }
-                                }
-
-                                double result = func.Call(args);
-                                values.Push(result);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception($"Cannot find the specified function: {t.Value}.");
-                    }
-                }
-                else if (type == TokenType.Unknown)
-                {
-                    throw new ExpressionEvaluationException($"Invalid token: {t}");
-                }
-            }
-
-            if (values.Count > 1)
-            {
-                throw new ExpressionEvaluationException(values, tokens);
-            }
-
-            return values.Pop();
-        }
-
-        public static double Evaluate(Token[] tokens, IMathContext context) //"(3 plus 2) times 10 divided 2"
+        public static double Evaluate(Token[] tokens, IMathContext context)
         {
             Stack<double> values = new Stack<double>();
             using var enumerator = (tokens as IEnumerable<Token>).GetEnumerator();
@@ -393,43 +297,6 @@ namespace MathEngine
             }
 
             return true;
-        }
-
-        private static void _PushBinaryOperator(Stack<Token> output, Stack<Token> operators, IMathContext context, Token t)
-        {
-            while (operators.TryPeek(out Token? top))
-            {
-                string topOperatorName = top.Value;
-                if (topOperatorName == "(")
-                {
-                    break;
-                }
-
-                if (context.IsFunction(topOperatorName)) // Is infix func?
-                {
-                    output.Push(operators.Pop());
-                }
-                else if (context.TryGetBinaryOperator(topOperatorName, out var topOperator) && context.TryGetBinaryOperator(t.Value, out var binaryOperator))
-                {
-                    int topOperatorPrecedence = topOperator!.Precedence;
-                    int operatorPrecedence = binaryOperator!.Precedence;
-
-                    if ((topOperatorPrecedence > operatorPrecedence) || (topOperatorPrecedence == operatorPrecedence && topOperator.Associativity == OperatorAssociativity.Left))
-                    {
-                        output.Push(operators.Pop());
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            operators.Push(t);
         }
 
         private static void PushBinaryOperator(Stack<Token> output, Stack<Token> operators, IMathContext context, Token t)

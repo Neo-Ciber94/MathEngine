@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace MathEngine.Utils
 {
-    public static class Requires
+    internal static class Requires
     {
         [Conditional("DEBUG")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -12,7 +12,7 @@ namespace MathEngine.Utils
         {
             if (expected != actual)
             {
-                throw new ArgumentException($"Invalid number of arguments, {expected} but {actual} was get.");
+                throw new ArgumentException($"Invalid number of arguments, expected {expected} but {actual} was get.");
             }
         }
     }

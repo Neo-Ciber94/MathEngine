@@ -4,7 +4,7 @@ using MathEngine;
 namespace MathEngine.Tests
 {
     [TestFixture]
-    public class VariablesAndConstantsTests
+    public class ConstantsAndValuesTests
     {
         [Test]
         public void InfinityTest()
