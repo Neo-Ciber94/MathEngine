@@ -5,10 +5,24 @@ using MathEngine.Utils;
 
 namespace MathEngine
 {
+    /// <summary>
+    /// Provides methods for evaluate math expressions.
+    /// </summary>
     public static class MathEvaluator
     {
+        /// <summary>
+        /// Evaluates the specified math expression.
+        /// </summary>
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(string expression) => Evaluate(expression, Tokenizer.Default);
 
+        /// <summary>
+        /// Evaluates the specified math expression.
+        /// </summary>
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <param name="tokenizer">The tokenizer for tokenize the expression.</param>
+        /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(string expression, ITokenizer tokenizer)
         {
             var context = tokenizer.Context;
@@ -17,6 +31,12 @@ namespace MathEngine
             return Evaluate(rpn, context);
         }
 
+        /// <summary>
+        /// Evaluates the specified math expression.
+        /// </summary>
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <param name="context">The context used for extract the tokens.</param>
+        /// <returns>The result of the evaluation</returns>
         public static double Evaluate(string expression, IMathContext context)
         {
             var tokenizer = new Tokenizer(context);
@@ -25,6 +45,12 @@ namespace MathEngine
             return Evaluate(rpn, context);
         }
 
+        /// <summary>
+        /// Evaluates the specified math expression.
+        /// </summary>
+        /// <param name="expression">The expression to evaluate.</param>
+        /// <param name="values">Additional values (variables or constants) to be used in the <see cref="IMathContext"/> during the expression evaluation.</param>
+        /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(string expression, params (string, double)[] values)
         {
             var context = new MathContext(values);
@@ -34,66 +60,87 @@ namespace MathEngine
             return Evaluate(rpn, context);
         }
 
+        /// <summary>
+        /// Evaluates the specified expression tokens.
+        /// </summary>
+        /// <param name="tokens">The tokens of the expression in RPN (Reverse Polish Notation).
+        /// <para></para>
+        /// Also see: <see href="https://en.wikipedia.org/wiki/Reverse_Polish_notation"/>.</param>
+        /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(Token[] tokens) => Evaluate(tokens, MathContext.Default);
 
+        /// <summary>
+        /// Evaluates the specified expression tokens.
+        /// </summary>
+        /// <param name="tokens">The tokens of the expression in RPN (Reverse Polish Notation).
+        /// <para></para>
+        /// Also see: <see href="https://en.wikipedia.org/wiki/Reverse_Polish_notation"/>.</param>
+        /// <param name="context">The context used for the evaluation.</param>
+        /// <returns>The result of the evaluation.</returns>
+        /// <exception cref="ExpressionEvaluationException">If there is a misplace token, or cannot find a function, operator or value.</exception>
+        /// <exception cref="FormatException">When parsing an invalid value.</exception>
         public static double Evaluate(Token[] tokens, IMathContext context)
         {
             Stack<double> values = new Stack<double>();
             using var enumerator = (tokens as IEnumerable<Token>).GetEnumerator();
             int argCount = -1;
 
-            while(enumerator.MoveNext())
+            while (enumerator.MoveNext())
             {
                 Token t = enumerator.Current;
                 TokenType type = t.Type;
 
-                if(type == TokenType.ArgCount)
+                if (type == TokenType.ArgCount)
                 {
                     argCount = int.Parse(t.Value);
                     enumerator.MoveNext();
                     t = enumerator.Current;
                     type = t.Type;
+
+                    if(type != TokenType.Function)
+                    {
+                        throw new ExpressionEvaluationException($"Expected a function, but {t} was get.", tokens);
+                    }
                 }
 
                 if (type == TokenType.Number)
                 {
                     values.Push(t.ToDouble());
                 }
-                if (type == TokenType.Value)
+                else if (type == TokenType.Value)
                 {
+                    if(!context.IsValue(t.Value))
+                        throw new ExpressionEvaluationException($"Cannot find a value named: {t.Value}", tokens);
+
                     values.Push(context.GetValue(t.Value));
                 }
                 else if (type == TokenType.UnaryOperator)
                 {
-                    var op = context.GetUnaryOperator(t.Value);
-                    if (values.TryPop(out double value))
-                    {
-                        double result = op.Evaluate(value);
-                        values.Push(result);
-                    }
-                    else
-                    {
-                        throw new ExpressionEvaluationException(values, tokens);
-                    }
+                    if(!context.TryGetUnaryOperator(t.Value, out var op))
+                        throw new ExpressionEvaluationException($"Cannot find an unary operator named: {t.Value}",tokens);
+
+                    if (!values.TryPop(out double value))
+                        throw new ExpressionEvaluationException(tokens);
+
+                    double result = op.Evaluate(value);
+                    values.Push(result);
                 }
                 else if (type == TokenType.BinaryOperator)
                 {
-                    var op = context.GetBinaryOperator(t.Value);
-                    if (values.TryPop(out double b) && values.TryPop(out double a))
-                    {
-                        double result = op.Evaluate(a, b);
-                        values.Push(result);
-                    }
-                    else
-                    {
-                        throw new ExpressionEvaluationException(values, tokens);
-                    }
+                    if (!context.TryGetBinaryOperator(t.Value, out var op))
+                        throw new ExpressionEvaluationException($"Cannot find a binary operator named: {t.Value}", tokens);
+
+                    if (!values.TryPop(out double b) || !values.TryPop(out double a))
+                        throw new ExpressionEvaluationException(tokens);
+
+                    double result = op.Evaluate(a, b);
+                    values.Push(result);
                 }
                 else if (type == TokenType.Function)
                 {
                     if (context.TryGetFunction(t.Value, out var func))
                     {
-                        int arity = argCount < 0? func!.Arity: argCount;
+                        int arity = argCount < 0 ? func!.Arity : argCount;
 
                         if (arity == 0)
                         {
@@ -109,14 +156,10 @@ namespace MathEngine
 
                                 while (i >= 0)
                                 {
-                                    if(values.TryPop(out double d))
-                                    {
-                                        args[i--] = d;
-                                    }
-                                    else
-                                    {
-                                        throw new ExpressionEvaluationException(values, tokens);
-                                    }
+                                    if (!values.TryPop(out double d))
+                                        throw new ExpressionEvaluationException(tokens);
+
+                                    args[i--] = d;
                                 }
 
                                 double result = func.Call(args);
@@ -127,25 +170,41 @@ namespace MathEngine
                     }
                     else
                     {
-                        throw new Exception($"Cannot find the specified function: {t.Value}.");
+                        throw new ExpressionEvaluationException($"Cannot find the specified function: {t.Value}.", tokens);
                     }
                 }
                 else if (type == TokenType.Unknown)
                 {
-                    throw new ExpressionEvaluationException($"Invalid token: {t}");
+                    throw new ExpressionEvaluationException($"Invalid token: {t}", tokens);
                 }
             }
 
             if (values.Count > 1)
             {
-                throw new ExpressionEvaluationException(values, tokens);
+                throw new ExpressionEvaluationException(tokens);
             }
 
             return values.Pop();
         }
 
+        /// <summary>
+        /// Converts the given tokens in infix notation to RPN (Reverse Polish Notation).
+        /// <para></para>
+        /// Also see: <see href="https://en.wikipedia.org/wiki/Reverse_Polish_notation"/>.
+        /// </summary>
+        /// <param name="tokens">The tokens to convert.</param>
+        /// <returns>The expression converted to RPN.</returns>
         public static Token[] InfixToRPN(Token[] tokens) => InfixToRPN(tokens, MathContext.Default);
 
+        /// <summary>
+        /// Converts the given tokens in infix notation to RPN (Reverse Polish Notation).
+        /// <para></para>
+        /// Also see: <see href="https://en.wikipedia.org/wiki/Reverse_Polish_notation"/>.
+        /// </summary>
+        /// <param name="tokens">The tokens to convert.</param>
+        /// <param name="context">The context to be used in the conversion.</param>
+        /// <returns>The expression converted to RPN.</returns>
+        /// <exception cref="ExpressionEvaluationException">If there is a parentheses mismatch, misplace unary operator or an unknown token.</exception>
         public static Token[] InfixToRPN(Token[] tokens, IMathContext context)
         {
             if (tokens.Length == 0)
@@ -217,6 +276,7 @@ namespace MathEngine
             return result;
         }
 
+        #region Helper Methods
         private static void CheckArgCount(IMathContext context, Stack<Token> output, Token? prevToken, ref bool isVarArgs, ref int argCount, Token t, TokenType type)
         {
             if (type == TokenType.Function && context.TryGetFunction(t.Value, out var func))
@@ -394,5 +454,6 @@ namespace MathEngine
 
             return true;
         }
+        #endregion
     }
 }

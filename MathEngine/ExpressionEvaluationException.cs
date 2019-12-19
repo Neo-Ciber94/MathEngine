@@ -1,30 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MathEngine.Utils;
 
 namespace MathEngine
 {
+    /// <summary>
+    /// Represents an error that occur when evaluating a expression.
+    /// </summary>
+    /// <seealso cref="System.Exception" />
     public sealed class ExpressionEvaluationException : Exception
     {
-        public ExpressionEvaluationException(string msg) : base(msg) { }
+        /// <summary>
+        /// Gets the expression tokens.
+        /// </summary>
+        /// <value>
+        /// The expression tokens.
+        /// </value>
+        public IReadOnlyCollection<Token> ExpressionTokens { get; }
 
-        public ExpressionEvaluationException(string msg, Token[] tokens) : base(GetMessageWithTokens(msg, tokens)) { }
-
-        internal ExpressionEvaluationException(Stack<double> values, Token[] tokens) : base(GetMessage(values, tokens)) { }
-
-        public static string GetMessageWithTokens(string msg, Token[] tokens)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionEvaluationException"/> class.
+        /// </summary>
+        /// <param name="expressionTokens">The expression tokens.</param>
+        public ExpressionEvaluationException(IReadOnlyCollection<Token> expressionTokens) : base(BuildMessage(expressionTokens))
         {
-            string expression = tokens.Select(t => t.Value).AsString();
-            return $"{msg}\n\nExpression: {expression}" +
-                $"\nExpression tokens: {tokens.AsString()}";
+            ExpressionTokens = expressionTokens;
         }
-        private static string GetMessage(Stack<double> values, Token[] tokens)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionEvaluationException"/> class.
+        /// </summary>
+        /// <param name="msg">The MSG.</param>
+        /// <param name="expressionTokens">The expression tokens.</param>
+        public ExpressionEvaluationException(string msg, IReadOnlyCollection<Token> expressionTokens) : base(msg)
         {
-            string expression = tokens.Select(t => t.Value).AsString();
-            return $"Expression evaluation have failed." +
-                $"\n\nValues on ouput stack: {values.AsString()}." +
-                $"\nExpression: {expression}\nExpression tokens: {tokens.AsString()}";
+            ExpressionTokens = expressionTokens;
+        }
+
+        static string BuildMessage(IReadOnlyCollection<Token> expressionTokens)
+        {
+            return expressionTokens
+                .Where(t => t.Type != TokenType.ArgCount)
+                .Select(t => t.Value)
+                .Aggregate((cur, str) => $"{cur} {str}");
         }
     }
 }
