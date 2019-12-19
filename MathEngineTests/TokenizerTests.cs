@@ -184,5 +184,19 @@ namespace MathEngine.Tests
             Assert.AreEqual(new Token("-", TokenType.BinaryOperator), result[4]);
             Assert.AreEqual(new Token("2", TokenType.Number), result[5]);
         }
+
+        [Test()]
+        public void GetTokensTest11()
+        {
+            var result = Tokenizer.Default.GetTokens("10 + 3 ");
+            var expected = new string[] { "10", "+", "3"};
+
+            Assert.AreEqual(3, result.Length, result.CollectionToString(s => s.Value));
+            CollectionAssert.AreEqual(expected, result.ToStringExpression(), result.CollectionToString(s => s.Value));
+
+            Assert.AreEqual(new Token("10", TokenType.Number), result[0]);
+            Assert.AreEqual(new Token("+", TokenType.BinaryOperator), result[1]);
+            Assert.AreEqual(new Token("3", TokenType.Number), result[2]);
+        }
     }
 }

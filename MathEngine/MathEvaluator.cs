@@ -99,7 +99,7 @@ namespace MathEngine
 
                     if(type != TokenType.Function)
                     {
-                        throw new ExpressionEvaluationException($"Expected a function, but {t} was get.", tokens);
+                        throw new ExpressionEvaluationException($"Expected a function, but {t} was get", tokens);
                     }
                 }
 
@@ -170,7 +170,7 @@ namespace MathEngine
                     }
                     else
                     {
-                        throw new ExpressionEvaluationException($"Cannot find the specified function: {t.Value}.", tokens);
+                        throw new ExpressionEvaluationException($"Cannot find the specified function: {t.Value}", tokens);
                     }
                 }
                 else if (type == TokenType.Unknown)
@@ -233,14 +233,14 @@ namespace MathEngine
                         break;
                     case TokenType.UnaryOperator:
                         if (!PushUnaryOperator(output, operators, context, t))
-                            throw new ExpressionEvaluationException($"Misplaced unary operator: {t}.", tokens);
+                            throw new ExpressionEvaluationException($"Misplaced unary operator: {t}", tokens);
                         break;
                     case TokenType.BinaryOperator:
                         PushBinaryOperator(output, operators, context, t);
                         break;
                     case TokenType.Parenthesis:
                         if (!PushParentheses(output, operators, t))
-                            throw new ExpressionEvaluationException("Parentheses mismatch.", tokens);
+                            throw new ExpressionEvaluationException("Parentheses mismatch", tokens);
                         break;
                     case TokenType.Comma:
                         while (operators.TryPeek(out Token? op))
@@ -254,7 +254,7 @@ namespace MathEngine
                         }
                         break;
                     default:
-                        throw new ExpressionEvaluationException($"Invalid token: {t}.", tokens);
+                        throw new ExpressionEvaluationException($"Invalid token: {t}", tokens);
                 }
 
                 CheckArgCount(context, output, prevToken, ref isVarArgs, ref argCount, t, type);
@@ -265,7 +265,7 @@ namespace MathEngine
             {
                 if (op.Type == TokenType.Parenthesis)
                 {
-                    throw new ExpressionEvaluationException("Parentheses mismatch.", tokens);
+                    throw new ExpressionEvaluationException("Parentheses mismatch", tokens);
                 }
 
                 output.Push(op);

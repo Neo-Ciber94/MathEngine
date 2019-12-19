@@ -160,11 +160,6 @@ namespace MathEngine
             {
                 curChar = scanner.ReadChar();
 
-                while (char.IsWhiteSpace(curChar))
-                {
-                    curChar = scanner.ReadChar();
-                }
-
                 if (char.IsLetter(curChar))
                 {
                     StringBuilder sb = new StringBuilder();
@@ -215,6 +210,9 @@ namespace MathEngine
                 }
                 else
                 {
+                    if (char.IsWhiteSpace(curChar))
+                        continue;
+
                     tokens.Add(curChar.ToString());
                 }
             }
