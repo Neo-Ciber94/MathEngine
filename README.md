@@ -85,7 +85,7 @@ Console.WriteLine(result); // 15
 context  = new MathContext(("x", 20), ("y", 5));
 
 result = MathEvaluator.Evaluate("x + y", context);
-Console.WriteLine(result); // 20
+Console.WriteLine(result); // 25
 ```
 
 ## Extendibility
