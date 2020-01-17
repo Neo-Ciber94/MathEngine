@@ -217,7 +217,6 @@ namespace ExtraUtils.MathEngine
             Stack<Token> operators = new Stack<Token>();
             Stack<Counter> argCounter = new Stack<Counter>();
 
-
             foreach (Token t in tokens)
             {
                 TokenType type = t.Type;

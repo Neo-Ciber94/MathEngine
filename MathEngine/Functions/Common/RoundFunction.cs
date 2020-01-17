@@ -7,6 +7,7 @@ namespace ExtraUtils.MathEngine.Functions.Common
     {
         public string Name => "Round";
 
+        public int Arity => 1;
         public double Call(ReadOnlySpan<double> args)
         {
             Requires.ArgumentCount(1, args.Length);
