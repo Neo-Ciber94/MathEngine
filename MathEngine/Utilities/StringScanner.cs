@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExtraUtils.MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utilities
 {
     public ref struct StringScanner
     {

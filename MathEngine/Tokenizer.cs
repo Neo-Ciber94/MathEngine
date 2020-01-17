@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ExtraUtils.MathEngine.Functions;
-using ExtraUtils.MathEngine.Utils;
+using ExtraUtils.MathEngine.Utilities;
 
 namespace ExtraUtils.MathEngine
 {

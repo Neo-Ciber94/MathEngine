@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ExtraUtils.MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utilities
 {
     public static class StringReaderExtensions
     {

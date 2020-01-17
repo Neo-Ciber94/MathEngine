@@ -1,4 +1,4 @@
-﻿using ExtraUtils.MathEngine.Utils;
+﻿using ExtraUtils.MathEngine.Utilities;
 using NUnit.Framework;
 
 namespace ExtraUtils.MathEngine.Tests

@@ -77,7 +77,7 @@ namespace ExtraUtils.MathEngine.Tests
         public void Test8()
         {
             double result = MathEvaluator.Evaluate("Sum((5), 2)");
-            Assert.AreEqual(12, result);
+            Assert.AreEqual(7, result);
         }
 
         [Test]
@@ -85,6 +85,13 @@ namespace ExtraUtils.MathEngine.Tests
         {
             double result = MathEvaluator.Evaluate("Sum(4, Sqrt(25), Max(1, 2, 3))");
             Assert.AreEqual(12, result);
+        }
+
+        [Test]
+        public void Test10()
+        {
+            double result = MathEvaluator.Evaluate("Sum(3, (10), Sqrt(25), Max(1, 2, 3))");
+            Assert.AreEqual(21, result);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace ExtraUtils.MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utilities
 {
     public static class StringExtensions
     {

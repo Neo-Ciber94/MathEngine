@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace ExtraUtils.MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utilities
 {
     internal static class Requires
     {

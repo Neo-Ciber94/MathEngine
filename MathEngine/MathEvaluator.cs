@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using ExtraUtils.MathEngine.Functions;
+using ExtraUtils.MathEngine.Utilities;
 
 namespace ExtraUtils.MathEngine
 {
@@ -213,10 +215,8 @@ namespace ExtraUtils.MathEngine
 
             Stack<Token> output = new Stack<Token>();
             Stack<Token> operators = new Stack<Token>();
-            Token? prevToken = null;
+            Stack<Counter> argCounter = new Stack<Counter>();
 
-            bool isVarArgs = false;
-            int argCount = 0;
 
             foreach (Token t in tokens)
             {
@@ -228,7 +228,7 @@ namespace ExtraUtils.MathEngine
                         PushNumber(output, operators, t);
                         break;
                     case TokenType.Function:
-                        PushFunction(output, operators, context, t);
+                        PushFunction(output, operators, argCounter, context, t);
                         break;
                     case TokenType.UnaryOperator:
                         if (!PushUnaryOperator(output, operators, context, t))
@@ -238,7 +238,7 @@ namespace ExtraUtils.MathEngine
                         PushBinaryOperator(output, operators, context, t);
                         break;
                     case TokenType.Parenthesis:
-                        if (!PushParentheses(output, operators, t))
+                        if (!PushParentheses(output, operators, argCounter, context, t))
                             throw new ExpressionEvaluationException("Parentheses mismatch", tokens);
                         break;
                     case TokenType.Comma:
@@ -246,6 +246,18 @@ namespace ExtraUtils.MathEngine
                         {
                             if (op.Value == "(")
                             {
+                                // Pop temporaly the parentheses
+                                Token temp = operators.Pop();
+
+                                // Check if the previous value in the operator stack is a function
+                                // and if is increment that function argument counter
+                                if(operators.TryPeek(out Token? func) && context.IsFunction(func.Value))
+                                {
+                                    argCounter.Peek().Increment();
+                                }
+
+                                // Put the parentheses back to the operators stack
+                                operators.Push(temp);
                                 break;
                             }
 
@@ -255,9 +267,6 @@ namespace ExtraUtils.MathEngine
                     default:
                         throw new ExpressionEvaluationException($"Invalid token: {t}", tokens);
                 }
-
-                CheckArgCount(context, output, prevToken, ref isVarArgs, ref argCount, t, type);
-                prevToken = t;
             }
 
             while (operators.TryPop(out Token? op))
@@ -318,9 +327,9 @@ namespace ExtraUtils.MathEngine
             }
         }
 
-        private static void PushFunction(Stack<Token> output, Stack<Token> operators, IMathContext context, Token t)
+        private static void PushFunction(Stack<Token> output, Stack<Token> operators, Stack<Counter> argCounter, IMathContext context, Token t)
         {
-            if (context.TryGetFunction(t.Value, out var func))
+            if (context.TryGetFunction(t.Value, out IFunction? func))
             {
                 if (func is IInfixFunction)
                 {
@@ -329,6 +338,7 @@ namespace ExtraUtils.MathEngine
                 else
                 {
                     operators.Push(t);
+                    argCounter.Push(new Counter(0));
                 }
             }
         }
@@ -421,7 +431,7 @@ namespace ExtraUtils.MathEngine
             operators.Push(t);
         }
 
-        private static bool PushParentheses(Stack<Token> output, Stack<Token> operators, Token t)
+        private static bool PushParentheses(Stack<Token> output, Stack<Token> operators, Stack<Counter> argCounter, IMathContext context, Token t)
         {
             string value = t.Value;
             if (value == "(")
@@ -440,6 +450,23 @@ namespace ExtraUtils.MathEngine
                     else
                     {
                         closedParentheses = true;
+
+                        if(argCounter.Count > 0 && operators.TryPeek(out Token? op))
+                        {
+                            if(context.TryGetFunction(op.Value, out IFunction? func))
+                            {
+                                int argCount = argCounter.Pop().Value;
+                                output.Push(Token.ArgCount(argCount + 1));
+                                output.Push(operators.Pop());
+
+                                if(func.Arity >= 0)
+                                {
+                                    Debug.Assert(func.Arity == argCount,
+                                        $"Invalid argCount for {func.Name} expected: {func.Arity} but {argCount} was get");
+                                }
+                            }
+                        }
+
                         break;
                     }
                 }
@@ -452,6 +479,12 @@ namespace ExtraUtils.MathEngine
             }
 
             return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsVargArgs(IFunction function)
+        {
+            return function.Arity < 0;
         }
         #endregion
     }

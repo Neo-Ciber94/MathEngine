@@ -12,7 +12,7 @@ namespace ExtraUtils.MathEngine
     /// <summary>
     /// Provides a default implementation of the <see cref="IMathContext"/> interface.
     /// </summary>
-    /// <seealso cref="ExtraUtils.MathEngine.IMathContext" />
+    /// <seealso cref="IMathContext" />
     public sealed class MathContext : IMathContext
     {
         /// <summary>

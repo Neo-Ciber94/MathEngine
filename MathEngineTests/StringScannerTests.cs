@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace ExtraUtils.MathEngine.Utils.Tests
+namespace ExtraUtils.MathEngine.Utilities.Tests
 {
     [TestFixture()]
     public class StringScannerTests

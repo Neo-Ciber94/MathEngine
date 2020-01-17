@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace ExtraUtils.MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utilities
 {
     public static class TokenExtensions
     {

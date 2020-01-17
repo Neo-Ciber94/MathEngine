@@ -1,5 +1,5 @@
 using System;
-using ExtraUtils.MathEngine.Utils;
+using ExtraUtils.MathEngine.Utilities;
 
 namespace ExtraUtils.MathEngine.Functions.Common
 {
