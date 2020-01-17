@@ -2,7 +2,7 @@
 
 A library for evaluate math expressions.
 
-### Implementation
+## Implementation
 
 Each expression to be evaluate pass for 3 steps:
 - Tokenize
@@ -25,6 +25,9 @@ The default tokenizer can detect *numbers* as ``doubles`` or ``int``,
 *binary* and *unary operators* as ``char`` and *variables*, *constants*, *functions* and *infix functions*
 as ``string``.
 
+And the default math context provides functions operations as: add, substract,
+multiply, divide, factorial, logarithm, natural logaritm, sine, cosine, tangent, and others.
+
 The library contains a large set of functions and operators as:
 
 | Name | Class Name |
@@ -39,7 +42,7 @@ The library contains a large set of functions and operators as:
 
 All these and others are found in ``ExtraUtils.MathEngine.Functions.Common``.
 
-### Usage
+## Usage
 Import the library
 ```csharp
 using ExtraUtils.MathEngine;
@@ -80,11 +83,12 @@ Console.WriteLine(result); // 15
 
 // MathContext is immutable, so you should instantiate a new one
 context  = new MathContext(("x", 20), ("y", 5));
+
 result = MathEvaluator.Evaluate("x + y", context);
 Console.WriteLine(result); // 20
 ```
 
-### Extendibility
+## Extendibility
 
 New functions and operators can be added by implementing
 ``IFunction``, ``IInfixFunction``, ``IBinaryFunction``, ``IUnaryFunction``,
