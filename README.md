@@ -1,4 +1,4 @@
-## ExtraUtils.MathEngine
+# ExtraUtils.MathEngine
 
 A library for evaluate math expressions.
 
@@ -25,6 +25,20 @@ The default tokenizer can detect *numbers* as ``doubles`` or ``int``,
 *binary* and *unary operators* as ``char`` and *variables*, *constants*, *functions* and *infix functions*
 as ``string``.
 
+The library contains a large set of functions and operators as:
+
+| Name | Class Name |
+| ---- | -------------------------- |
+| Sine | SineFunction               |
+| Cosine | CosineFunction           |
+| Natural Logarithm  | LnFunction   |
+| Logarithm | LogFunction           |
+| Sqrt  | SqrtFunction              |
+| Round | RoundFunction             |
+| Factorial | FactorialOperator     |
+
+All these and others are found in ``ExtraUtils.MathEngine.Functions.Common``.
+
 ### Usage
 Import the library
 ```csharp
@@ -34,5 +48,44 @@ using ExtraUtils.MathEngine;
 An expression can be evaluate as follow
 ```csharp
 double result = MathEvaluator.Evaluate("5 + 3 * 2");
-Console.WriteLine(result); // 10
+Console.WriteLine(result); // 11
 ```
+
+If the evaluation fails an ``ExpressionEvaluationException`` will
+be throw.
+
+```csharp
+double result = MathEvaluator.Evaluate("5 + 3 ** 2");
+Console.WriteLine(result); // ExpressionEvaluationException
+```
+
+There is a large set of functions as infix functions
+```csharp
+double result = MathEvaluator.Evaluate("5 plus 3 times 2");
+Console.WriteLine(result); // 11
+```
+
+And also can evaluate complicate expressions
+```csharp
+double result = MathEvaluator.Evaluate("Sin(35) * (2^5 + (3 * 4 / 10))");
+Console.WriteLine(result); // 19.042737686854732
+```
+
+Also you can use variables by using a custom ``IMathContext``
+```csharp
+IMathContext context = new MathContext(("x", 10), ("y", 5));
+
+double result = MathEvaluator.Evaluate("x + y", context);
+Console.WriteLine(result); // 15
+
+// MathContext is immutable, so you should instantiate a new one
+context  = new MathContext(("x", 20), ("y", 5));
+result = MathEvaluator.Evaluate("x + y", context);
+Console.WriteLine(result); // 20
+```
+
+### Extendibility
+
+New functions and operators can be added by implementing
+``IFunction``, ``IInfixFunction``, ``IBinaryFunction``, ``IUnaryFunction``,
+the system use *reflection* to locate all the implementations.

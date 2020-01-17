@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ExtraUtils.MathEngine\ExtraUtils.MathEngine.csproj" />
+    <ProjectReference Include="..\MathEngine\MathEngine.csproj" />
   </ItemGroup>
 
 </Project>
