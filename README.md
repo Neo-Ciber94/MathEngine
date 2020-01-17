@@ -1,4 +1,4 @@
-# ExtraUtils.MathEngine
+# ExtraUtils.MathEngine [Experimental]
 
 A library for evaluate math expressions.
 

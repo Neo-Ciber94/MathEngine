@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ExtraUtils.MathEngine.Functions;
 
 namespace ExtraUtils.MathEngine
@@ -115,7 +116,7 @@ namespace ExtraUtils.MathEngine
                 }
                 else if (type == TokenType.UnaryOperator)
                 {
-                    if(!context.TryGetUnaryOperator(t.Value, out var op))
+                    if(!context.TryGetUnaryOperator(t.Value, out IUnaryOperator? op))
                         throw new ExpressionEvaluationException($"Cannot find an unary operator named: {t.Value}",tokens);
 
                     if (!values.TryPop(out double value))
@@ -126,7 +127,7 @@ namespace ExtraUtils.MathEngine
                 }
                 else if (type == TokenType.BinaryOperator)
                 {
-                    if (!context.TryGetBinaryOperator(t.Value, out var op))
+                    if (!context.TryGetBinaryOperator(t.Value, out IBinaryOperator? op))
                         throw new ExpressionEvaluationException($"Cannot find a binary operator named: {t.Value}", tokens);
 
                     if (!values.TryPop(out double b) || !values.TryPop(out double a))
@@ -137,34 +138,33 @@ namespace ExtraUtils.MathEngine
                 }
                 else if (type == TokenType.Function)
                 {
-                    if (context.TryGetFunction(t.Value, out var func))
+                    if (context.TryGetFunction(t.Value, out IFunction? func))
                     {
                         int arity = argCount < 0 ? func!.Arity : argCount;
 
                         if (arity == 0)
                         {
-                            var empty = ReadOnlySpan<double>.Empty;
+                            ReadOnlySpan<double> empty = ReadOnlySpan<double>.Empty;
                             values.Push(func.Call(empty));
                         }
                         else
                         {
-                            unsafe
+                            Debug.Assert(arity > 0, $"Invalid function arity for {t}, was: {arity}");
+
+                            int i = arity - 1;
+                            Span<double> args = stackalloc double[arity];
+
+                            while (i >= 0)
                             {
-                                int i = arity - 1;
-                                Span<double> args = stackalloc double[arity];
+                                if (!values.TryPop(out double d))
+                                    throw new ExpressionEvaluationException(tokens);
 
-                                while (i >= 0)
-                                {
-                                    if (!values.TryPop(out double d))
-                                        throw new ExpressionEvaluationException(tokens);
-
-                                    args[i--] = d;
-                                }
-
-                                double result = func.Call(args);
-                                values.Push(result);
-                                argCount = -1;
+                                args[i--] = d;
                             }
+
+                            double result = func.Call(args);
+                            values.Push(result);
+                            argCount = -1;
                         }
                     }
                     else
@@ -218,7 +218,7 @@ namespace ExtraUtils.MathEngine
             bool isVarArgs = false;
             int argCount = 0;
 
-            foreach (var t in tokens)
+            foreach (Token t in tokens)
             {
                 TokenType type = t.Type;
                 switch (type)
@@ -270,7 +270,7 @@ namespace ExtraUtils.MathEngine
                 output.Push(op);
             }
 
-            var result = output.ToArray();
+            Token[] result = output.ToArray();
             Array.Reverse(result);
             return result;
         }
