@@ -16,7 +16,7 @@ namespace ExtraUtils.MathEngine
         /// <summary>
         /// The token is either a constant or variable value. e.g. pi, x, y, e.
         /// </summary>
-        Value,
+        VariableOrConstant,
         /// <summary>
         /// The token is an operator that operates over 2 arguments.
         /// </summary>

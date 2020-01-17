@@ -17,6 +17,7 @@ namespace ExtraUtils.MathEngine
         ///   <c>true</c> if the specified function exists in this context; otherwise, <c>false</c>.
         /// </returns>
         public bool IsFunction(string functionName);
+
         /// <summary>
         /// Determines whether a binary operator with the specified symbol exists in this context.
         /// </summary>
@@ -25,6 +26,7 @@ namespace ExtraUtils.MathEngine
         ///   <c>true</c> if the binery operator exists; otherwise, <c>false</c>.
         /// </returns>
         public bool IsBinaryOperator(string symbol);
+
         /// <summary>
         /// Determines whether an unary operator with the specified symbol exists in this context.
         /// </summary>
@@ -33,6 +35,7 @@ namespace ExtraUtils.MathEngine
         ///   <c>true</c> if exist an unary operator with the given symbol; otherwise, <c>false</c>.
         /// </returns>
         public bool IsUnaryOperator(string symbol);
+
         /// <summary>
         /// Determines if exists a constant or variable with the specified name.
         /// </summary>
@@ -40,7 +43,8 @@ namespace ExtraUtils.MathEngine
         /// <returns>
         ///   <c>true</c> if the specified value exists; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsValue(string name);
+        public bool IsVariableOrConstant(string name);
+
         /// <summary>
         /// Determines whether a binary operator with the specified symbol exists in this context.
         /// </summary>
@@ -49,6 +53,7 @@ namespace ExtraUtils.MathEngine
         ///   <c>true</c> if the binery operator exists; otherwise, <c>false</c>.
         /// </returns>
         public bool IsBinaryOperator(char symbol) => IsBinaryOperator(symbol.ToString());
+
         /// <summary>
         /// Determines whether an unary operator with the specified symbol exists in this context.
         /// </summary>
@@ -57,6 +62,7 @@ namespace ExtraUtils.MathEngine
         ///   <c>true</c> if exist an unary operator with the given symbol; otherwise, <c>false</c>.
         /// </returns>
         public bool IsUnaryOperator(char symbol) => IsUnaryOperator(symbol.ToString());
+
         /// <summary>
         /// Tries get a function with the specified name from this context.
         /// </summary>
@@ -64,6 +70,7 @@ namespace ExtraUtils.MathEngine
         /// <param name="func">The function.</param>
         /// <returns><c>true</c>If the function exists; otherwise, <c>false</c></returns>
         public bool TryGetFunction(string functionName, [NotNullWhen(returnValue: true)] out IFunction? func);
+
         /// <summary>
         /// Tries get a binary operator with the specified symbol from this context.
         /// </summary>
@@ -71,6 +78,7 @@ namespace ExtraUtils.MathEngine
         /// <param name="op">The operator.</param>
         /// <returns><c>true</c>If the operator exists; otherwise, <c>false</c></returns>
         public bool TryGetBinaryOperator(string symbol, [NotNullWhen(returnValue: true)] out IBinaryOperator? op);
+
         /// <summary>
         /// Tries get an unary operator with the specified symbol from this context.
         /// </summary>
@@ -78,6 +86,7 @@ namespace ExtraUtils.MathEngine
         /// <param name="op">The operator.</param>
         /// <returns><c>true</c>If the operator exists; otherwise, <c>false</c></returns>
         public bool TryGetUnaryOperator(string symbol, [NotNullWhen(returnValue: true)]  out IUnaryOperator? op);
+
         /// <summary>
         /// Gets a function from this context with the specified name.
         /// </summary>
@@ -93,6 +102,7 @@ namespace ExtraUtils.MathEngine
 
             throw new InvalidOperationException($"Cannot find the specified function: {functionName}.");
         }
+
         /// <summary>
         /// Gets a binary operator from this context with the specified name.
         /// </summary>
@@ -108,6 +118,7 @@ namespace ExtraUtils.MathEngine
 
             throw new InvalidOperationException($"Cannot find the specified operator: {symbol}.");
         }
+
         /// <summary>
         /// Gets an unary operator from this context with the specified name.
         /// </summary>
@@ -123,11 +134,12 @@ namespace ExtraUtils.MathEngine
 
             throw new InvalidOperationException($"Cannot find the specified operator: {symbol}.");
         }
+
         /// <summary>
         /// Gets a value from this context with the specified name.
         /// </summary>
         /// <param name="name">The name of the value.</param>
         /// <returns>The double value of the constant or variable.</returns>
-        public double GetValue(string name);
+        public double GetVariableOrConstant(string name);
     }
 }

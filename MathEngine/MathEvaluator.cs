@@ -106,12 +106,12 @@ namespace ExtraUtils.MathEngine
                 {
                     values.Push(t.ToDouble());
                 }
-                else if (type == TokenType.Value)
+                else if (type == TokenType.VariableOrConstant)
                 {
-                    if(!context.IsValue(t.Value))
+                    if(!context.IsVariableOrConstant(t.Value))
                         throw new ExpressionEvaluationException($"Cannot find a value named: {t.Value}", tokens);
 
-                    values.Push(context.GetValue(t.Value));
+                    values.Push(context.GetVariableOrConstant(t.Value));
                 }
                 else if (type == TokenType.UnaryOperator)
                 {
@@ -224,7 +224,7 @@ namespace ExtraUtils.MathEngine
                 switch (type)
                 {
                     case TokenType.Number:
-                    case TokenType.Value:
+                    case TokenType.VariableOrConstant:
                         PushNumber(output, operators, t);
                         break;
                     case TokenType.Function:

@@ -46,7 +46,7 @@ namespace ExtraUtils.MathEngine
 
         public Token[] GetTokens(string expression)
         {
-            var array = ToStringArray(expression);
+            string[] array = ToStringArray(expression);
             return GetTokensInternal(array);
         }
         
@@ -69,9 +69,9 @@ namespace ExtraUtils.MathEngine
                 {
                     tokens.Add(new Token(current, TokenType.Number));
                 }
-                else if (context.IsValue(current))
+                else if (context.IsVariableOrConstant(current))
                 {
-                    tokens.Add(new Token(current, TokenType.Value));
+                    tokens.Add(new Token(current, TokenType.VariableOrConstant));
                 }
                 else if (context.IsFunction(current))
                 {
@@ -122,7 +122,7 @@ namespace ExtraUtils.MathEngine
             {
                 if (prev != null && (prev == ")" 
                     || IsNumber(prev) 
-                    || context.IsValue(prev) 
+                    || context.IsVariableOrConstant(prev) 
                     || (context.IsUnaryOperator(prev) && !context.IsBinaryOperator(prev))))
                 {
                     return false;
@@ -132,7 +132,7 @@ namespace ExtraUtils.MathEngine
             }
             else if (op.Notation == OperatorNotation.Postfix)
             {
-                return prev != null && (prev == ")" || IsNumber(prev) || context.IsValue(prev));
+                return prev != null && (prev == ")" || IsNumber(prev) || context.IsVariableOrConstant(prev));
             }
             else
             {
@@ -216,8 +216,6 @@ namespace ExtraUtils.MathEngine
                     tokens.Add(curChar.ToString());
                 }
             }
-
-
 
             return tokens.ToArray();
         }

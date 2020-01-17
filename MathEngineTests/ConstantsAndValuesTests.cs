@@ -9,7 +9,7 @@ namespace ExtraUtils.MathEngine.Tests
         [Test]
         public void InfinityTest()
         {
-            var infinity = MathContext.Default.GetValue("infinity");
+            var infinity = MathContext.Default.GetVariableOrConstant("infinity");
             Assert.AreEqual(double.PositiveInfinity, infinity);
             Assert.AreEqual(double.NegativeInfinity, -infinity);
         }
@@ -18,8 +18,8 @@ namespace ExtraUtils.MathEngine.Tests
         public void CustomVariableTest()
         {
             var context = new MathContext(("x", 10), ("y", -25));
-            Assert.AreEqual(10, context.GetValue("x"));
-            Assert.AreEqual(-25, context.GetValue("y"));
+            Assert.AreEqual(10, context.GetVariableOrConstant("x"));
+            Assert.AreEqual(-25, context.GetVariableOrConstant("y"));
         }
     }
 }

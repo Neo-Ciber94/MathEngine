@@ -131,7 +131,7 @@ namespace ExtraUtils.MathEngine
 
         public bool IsUnaryOperator(string symbol) => UnaryOperators.ContainsKey(symbol);
 
-        public bool IsValue(string name) => Values.ContainsKey(name);
+        public bool IsVariableOrConstant(string name) => Values.ContainsKey(name);
 
         public bool TryGetFunction(string functionName, [NotNullWhen(true)] out IFunction? func)
         {
@@ -200,7 +200,7 @@ namespace ExtraUtils.MathEngine
             throw new Exception($"Cannot find the operator named: {symbol}");
         }
 
-        public double GetValue(string name)
+        public double GetVariableOrConstant(string name)
         {
             if (Values.TryGetValue(name, out var result))
             {

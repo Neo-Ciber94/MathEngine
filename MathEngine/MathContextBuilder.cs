@@ -33,7 +33,7 @@ namespace ExtraUtils.MathEngine
                 _infixFunctios = infixFunctios;
             }
 
-            public double GetValue(string name) => _values[name];
+            public double GetVariableOrConstant(string name) => _values[name];
 
             public bool IsBinaryOperator(string symbol) => _binaryOperators.ContainsKey(symbol);
 
@@ -41,7 +41,7 @@ namespace ExtraUtils.MathEngine
 
             public bool IsUnaryOperator(string symbol) => _infixFunctios.ContainsKey(symbol);
 
-            public bool IsValue(string name) => _values.ContainsKey(name);
+            public bool IsVariableOrConstant(string name) => _values.ContainsKey(name);
 
             public bool TryGetBinaryOperator(string symbol, [NotNullWhen(true)] out IBinaryOperator? op)
             {
