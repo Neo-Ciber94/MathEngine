@@ -1,4 +1,4 @@
-﻿namespace MathEngine
+﻿namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Provides a mechanism for extract the tokens from an expression.

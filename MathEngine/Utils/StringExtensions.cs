@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace MathEngine.Utils
+namespace ExtraUtils.MathEngine.Utils
 {
     public static class StringExtensions
     {
@@ -34,5 +36,17 @@ namespace MathEngine.Utils
         {
             return s.Length == 0 ? (char?)null : s[s.Length - 1];
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string AsString<T>(this IEnumerable<T> enumerable) => AsString(enumerable, ',');
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string AsString<T>(this IEnumerable<T> enumerable, char separator)
+        {
+            return new StringBuilder('[')
+                .AppendJoin(separator, enumerable)
+                .Append(']')
+                .ToString()
+;        }
     }
 }

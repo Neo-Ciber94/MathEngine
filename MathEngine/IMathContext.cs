@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using MathEngine.Functions;
+using ExtraUtils.MathEngine.Functions;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Provides all the functions, operators and values used during at math expression evaluation.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MathEngine.Functions
+namespace ExtraUtils.MathEngine.Functions
 {
     /// <summary>
     /// Represents a function.

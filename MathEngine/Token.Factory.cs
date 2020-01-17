@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     public partial class Token
     {

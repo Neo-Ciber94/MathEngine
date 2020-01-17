@@ -1,5 +1,5 @@
 
-namespace MathEngine.Functions.Common
+namespace ExtraUtils.MathEngine.Functions.Common
 {
     public sealed class ModuloInfixFunction : IInfixFunction
     {

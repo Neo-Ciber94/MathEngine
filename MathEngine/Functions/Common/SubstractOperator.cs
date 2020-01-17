@@ -1,4 +1,4 @@
-namespace MathEngine.Functions.Common
+namespace ExtraUtils.MathEngine.Functions.Common
 {
     public class SubstractOperator : IBinaryOperator
     {

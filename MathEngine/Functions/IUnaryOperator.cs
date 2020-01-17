@@ -1,7 +1,7 @@
 ﻿using System;
-using MathEngine.Utils;
+using ExtraUtils.MathEngine.Utils;
 
-namespace MathEngine.Functions
+namespace ExtraUtils.MathEngine.Functions
 {
     /// <summary>
     /// Represents where an unary operator is positioned.
@@ -21,7 +21,7 @@ namespace MathEngine.Functions
     /// <summary>
     /// Represents an operation performed over 1 value.
     /// </summary>
-    /// <seealso cref="MathEngine.Functions.IFunction" />
+    /// <seealso cref="ExtraUtils.MathEngine.Functions.IFunction" />
     public interface IUnaryOperator : IFunction
     {
         /// <summary>

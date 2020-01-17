@@ -1,5 +1,5 @@
 
-namespace MathEngine.Functions
+namespace ExtraUtils.MathEngine.Functions
 {
     /// <summary>
     /// Contains constants values for represent the precedences of binary operators.

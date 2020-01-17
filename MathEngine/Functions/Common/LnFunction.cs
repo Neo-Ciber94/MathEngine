@@ -1,7 +1,7 @@
 ﻿using System;
-using MathEngine.Utils;
+using ExtraUtils.MathEngine.Utils;
 
-namespace MathEngine.Functions.Common
+namespace ExtraUtils.MathEngine.Functions.Common
 {
     public sealed class LnFunction : IFunction
     {

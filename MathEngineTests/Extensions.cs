@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MathEngine.Tests
+namespace ExtraUtils.MathEngine.Tests
 {
     public static class Extensions
     {

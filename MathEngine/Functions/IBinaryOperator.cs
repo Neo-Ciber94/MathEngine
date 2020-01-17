@@ -1,7 +1,7 @@
 ﻿using System;
-using MathEngine.Utils;
+using ExtraUtils.MathEngine.Utils;
 
-namespace MathEngine.Functions
+namespace ExtraUtils.MathEngine.Functions
 {
     /// <summary>
     /// Represents how operators of the same precedence will be grouped in the absent of parentheses.
@@ -21,12 +21,12 @@ namespace MathEngine.Functions
     /// <summary>
     /// Represents an operation performed over 2 values.
     /// </summary>
-    /// <seealso cref="MathEngine.Functions.IFunction" />
+    /// <seealso cref="ExtraUtils.MathEngine.Functions.IFunction" />
     public interface IBinaryOperator : IFunction
     {
         /// <summary>
         /// Gets a value indicating the order which this operation will be performed.
-        /// Is recomended to use <see cref="MathEngine.Functions.OperatorPrecedence"/> constants values for implement this property.
+        /// Is recomended to use <see cref="ExtraUtils.MathEngine.Functions.OperatorPrecedence"/> constants values for implement this property.
         /// <para></para>
         /// See also: <see href="https://en.wikipedia.org/wiki/Order_of_operations"/>
         /// </summary>

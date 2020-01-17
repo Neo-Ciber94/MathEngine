@@ -5,14 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Fasterflect.Extensions;
-using MathEngine.Functions;
+using ExtraUtils.MathEngine.Functions;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Provides a default implementation of the <see cref="IMathContext"/> interface.
     /// </summary>
-    /// <seealso cref="MathEngine.IMathContext" />
+    /// <seealso cref="ExtraUtils.MathEngine.IMathContext" />
     public sealed class MathContext : IMathContext
     {
         /// <summary>

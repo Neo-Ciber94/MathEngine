@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MathEngine.Functions;
-using MathEngine.Utils;
+using ExtraUtils.MathEngine.Functions;
+using ExtraUtils.MathEngine.Utils;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// A default implementation of the <see cref="ITokenizer"/> interface that provides methods for extract the tokens of an expression.
     /// </summary>
-    /// <seealso cref="MathEngine.ITokenizer" />
+    /// <seealso cref="ExtraUtils.MathEngine.ITokenizer" />
     public sealed class Tokenizer : ITokenizer
     {
         private static Tokenizer? _default;

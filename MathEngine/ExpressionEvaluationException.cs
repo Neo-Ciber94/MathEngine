@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Represents an error that occur when evaluating a expression.

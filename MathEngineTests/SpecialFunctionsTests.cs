@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 
-namespace MathEngine.Tests
+namespace ExtraUtils.MathEngine.Tests
 {
     [TestFixture]
     public class SpecialFunctionsTests

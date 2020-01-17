@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using MathEngine.Functions;
-using MathEngine.Utils;
+using ExtraUtils.MathEngine.Functions;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Provides methods for evaluate math expressions.

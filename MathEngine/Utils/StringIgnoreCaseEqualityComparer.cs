@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     public class StringIgnoreCaseEqualityComparer : IEqualityComparer<string>
     {

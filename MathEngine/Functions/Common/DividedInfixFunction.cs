@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MathEngine.Functions.Common
+namespace ExtraUtils.MathEngine.Functions.Common
 {
     public sealed class DividedInfixFunction : IInfixFunction
     {

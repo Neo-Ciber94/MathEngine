@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace MathEngine
+namespace ExtraUtils.MathEngine
 {
     /// <summary>
     /// Represents the type of a token.
@@ -50,7 +50,7 @@ namespace MathEngine
     /// <summary>
     /// Represents a value of an expression.
     /// </summary>
-    /// <seealso cref="System.IEquatable{MathEngine.Token}" />
+    /// <seealso cref="System.IEquatable{ExtraUtils.MathEngine.Token}" />
     public partial class Token : IEquatable<Token>
     {
         /// <summary>

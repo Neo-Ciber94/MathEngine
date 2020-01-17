@@ -1,7 +1,7 @@
-﻿using MathEngine.Utils;
+﻿using ExtraUtils.MathEngine.Utils;
 using NUnit.Framework;
 
-namespace MathEngine.Tests
+namespace ExtraUtils.MathEngine.Tests
 {
     [TestFixture()]
     public class TokenizerTests
