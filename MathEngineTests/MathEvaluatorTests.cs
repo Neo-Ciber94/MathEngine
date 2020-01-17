@@ -72,5 +72,19 @@ namespace ExtraUtils.MathEngine.Tests
             Assert.AreEqual(-20, MathEvaluator.Evaluate("10*-2"));
             Assert.AreEqual(-10, MathEvaluator.Evaluate("50/-5"));
         }
+
+        [Test]
+        public void Test8()
+        {
+            double result = MathEvaluator.Evaluate("Sum((5), 2)");
+            Assert.AreEqual(12, result);
+        }
+
+        [Test]
+        public void Test9()
+        {
+            double result = MathEvaluator.Evaluate("Sum(4, Sqrt(25), Max(1, 2, 3))");
+            Assert.AreEqual(12, result);
+        }
     }
 }
