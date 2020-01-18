@@ -28,19 +28,9 @@ as ``string``.
 And the default math context provides functions operations as: add, substract,
 multiply, divide, factorial, logarithm, natural logaritm, sine, cosine, tangent, and others.
 
-The library contains a large set of functions and operators as:
+You can find all the operators and functions in ``ExtraUtils.MathEngine.Functions.Common``.
 
-| Name | Class Name |
-| ---- | -------------------------- |
-| Sine | SineFunction               |
-| Cosine | CosineFunction           |
-| Natural Logarithm  | LnFunction   |
-| Logarithm | LogFunction           |
-| Sqrt  | SqrtFunction              |
-| Round | RoundFunction             |
-| Factorial | FactorialOperator     |
-
-All these and others are found in ``ExtraUtils.MathEngine.Functions.Common``.
+Check [the list of functions and operators]().
 
 ## Usage
 Import the library
