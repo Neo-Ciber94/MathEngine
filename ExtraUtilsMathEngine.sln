@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{301DA8F9-305F-4CB0-9132-83BE5E665259}"
 	ProjectSection(SolutionItems) = preProject
+		ListOfFunctions.md = ListOfFunctions.md
 		README.md = README.md
 	EndProjectSection
 EndProject

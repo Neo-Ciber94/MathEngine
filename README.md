@@ -91,5 +91,5 @@ Console.WriteLine(result); // 25
 ## Extendibility
 
 New functions and operators can be added by implementing
-``IFunction``, ``IInfixFunction``, ``IBinaryFunction``, ``IUnaryFunction``,
+``IFunction``, ``IInfixFunction``, ``IBinaryOperator``, ``IUnaryOperator``,
 the system use *reflection* to locate all the implementations.

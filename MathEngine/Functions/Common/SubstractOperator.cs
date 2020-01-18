@@ -1,6 +1,6 @@
 namespace ExtraUtils.MathEngine.Functions.Common
 {
-    public class SubstractOperator : IBinaryOperator
+    public sealed class SubstractOperator : IBinaryOperator
     {
         public int Precedence => OperatorPrecedence.Low;
 

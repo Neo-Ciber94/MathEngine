@@ -27,9 +27,9 @@ namespace ExtraUtils.MathEngine
         /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(string expression, ITokenizer tokenizer)
         {
-            var context = tokenizer.Context;
-            var tokens = tokenizer.GetTokens(expression);
-            var rpn = InfixToRPN(tokens, context);
+            IMathContext context = tokenizer.Context;
+            Token[] tokens = tokenizer.GetTokens(expression);
+            Token[] rpn = InfixToRPN(tokens, context);
             return Evaluate(rpn, context);
         }
 
@@ -41,9 +41,9 @@ namespace ExtraUtils.MathEngine
         /// <returns>The result of the evaluation</returns>
         public static double Evaluate(string expression, IMathContext context)
         {
-            var tokenizer = new Tokenizer(context);
-            var tokens = tokenizer.GetTokens(expression);
-            var rpn = InfixToRPN(tokens);
+            ITokenizer tokenizer = new Tokenizer(context);
+            Token[] tokens = tokenizer.GetTokens(expression);
+            Token[] rpn = InfixToRPN(tokens);
             return Evaluate(rpn, context);
         }
 
@@ -55,10 +55,10 @@ namespace ExtraUtils.MathEngine
         /// <returns>The result of the evaluation.</returns>
         public static double Evaluate(string expression, params (string, double)[] values)
         {
-            var context = new MathContext(values);
-            var tokenizer = new Tokenizer(context);
-            var tokens = tokenizer.GetTokens(expression);
-            var rpn = InfixToRPN(tokens);
+            IMathContext context = new MathContext(values);
+            ITokenizer tokenizer = new Tokenizer(context);
+            Token[] tokens = tokenizer.GetTokens(expression);
+            Token[] rpn = InfixToRPN(tokens);
             return Evaluate(rpn, context);
         }
 
@@ -284,35 +284,6 @@ namespace ExtraUtils.MathEngine
         }
 
         #region Helper Methods
-        private static void CheckArgCount(IMathContext context, Stack<Token> output, Token? prevToken, ref bool isVarArgs, ref int argCount, Token t, TokenType type)
-        {
-            if (type == TokenType.Function && context.TryGetFunction(t.Value, out var func))
-            {
-                if (!isVarArgs)
-                {
-                    isVarArgs = func.Arity < 0;
-                }
-            }
-            else if (type == TokenType.Comma && isVarArgs)
-            {
-                argCount++;
-            }
-            else if (type == TokenType.Parenthesis && isVarArgs && t.Value == ")")
-            {
-                if (prevToken!.Value == "(")
-                {
-                    output.Push(Token.ArgCount(argCount));
-                }
-                else
-                {
-                    output.Push(Token.ArgCount(argCount + 1));
-                }
-
-                isVarArgs = false;
-                argCount = 0;
-            }
-        }
-
         private static void PushNumber(Stack<Token> output, Stack<Token> operators, Token t)
         {
             output.Push(t);
@@ -454,8 +425,8 @@ namespace ExtraUtils.MathEngine
                         {
                             if(context.TryGetFunction(op.Value, out IFunction? func))
                             {
-                                int argCount = argCounter.Pop().Value;
-                                output.Push(Token.ArgCount(argCount + 1));
+                                int argCount = argCounter.Pop().Value + 1;
+                                output.Push(Token.ArgCount(argCount));
                                 output.Push(operators.Pop());
 
                                 if(func.Arity >= 0)
@@ -472,18 +443,11 @@ namespace ExtraUtils.MathEngine
 
                 if (!closedParentheses)
                 {
-                    //throw new ExpressionEvaluationException("Parentheses mismatch.");
                     return false;
                 }
             }
 
             return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsVargArgs(IFunction function)
-        {
-            return function.Arity < 0;
         }
         #endregion
     }
