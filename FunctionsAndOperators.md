@@ -1,7 +1,7 @@
 # List of functions
 
 | Name                           | Symbol     | Type                 | Arity      | Class Name                          |
-|:------------------------------:|:----------:|:--------------------:|:----------:|:-----------------------------------:|
+|:-------------------------------|:----------:|:---------------------|:----------:|:------------------------------------|
 | Add                            | +          | Binary Operator      | 2          | AddOperator                         |
 | Substract                      | -          | Binary Operator      | 2          | SubstractOperator                   |
 | Multiply                       | *          | Binary Operator      | 2          | MultiplyOperator                    |

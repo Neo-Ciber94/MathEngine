@@ -30,7 +30,7 @@ multiply, divide, factorial, logarithm, natural logaritm, sine, cosine, tangent,
 
 You can find all the operators and functions in ``ExtraUtils.MathEngine.Functions.Common``.
 
-Check [the list of functions and operators]().
+Check [the list of functions and operators](https://github.com/Neo-Ciber94/MathEngine/blob/master/FunctionsAndOperators.md).
 
 ## Usage
 Import the library
