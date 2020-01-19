@@ -1,4 +1,12 @@
-# List of functions
+# List of functions and operators
+
+Functions and operators of ``ExtraUtils.MathEngine.Functions.Common``.
+
+- **Name**: Known name of the function or operator.
+- **Symbol**: Name of the function within the default ``IMathContext``.
+- **Type**: Type of function or operator.
+- **Arity**: number of arguments the function takes.
+- **Class**: Name of the actual class.
 
 | Name                           | Symbol     | Type                 | Arity      | Class Name                          |
 |:-------------------------------|:----------:|:---------------------|:----------:|:------------------------------------|
@@ -16,7 +24,7 @@
 | Divided                        | Divided    | Infix Function       | 2          | DividedInfixFunction                |
 | Pow                            | Pow        | Infix Function       | 2          | PowInfixFunction                    |
 | Modulo                         | Mod        | Infix Function       | 2          | ModuloInfixFunction                 |
-| Sqrt                           | Sqrt       | Function             | 1          | SqrtFunction                        |
+| Square root                    | Sqrt       | Function             | 1          | SqrtFunction                        |
 | Ln                             | Ln         | Function             | 1          | LnFunction                          |
 | Log                            | Log        | Function             | 1-2        | LogFunction                         |
 | Max                            | Max        | Function             | Variable   | MaxFunction                         |
