@@ -1,4 +1,5 @@
 using System;
+using ExtraUtils.MathEngine.Utilities;
 
 namespace ExtraUtils.MathEngine.Functions.Common
 {
@@ -8,18 +9,15 @@ namespace ExtraUtils.MathEngine.Functions.Common
 
         public double Call(ReadOnlySpan<double> args)
         {
-            if(args.Length > 1)
-            {
-                double max = args[0];
-                for(int i = 1; i < args.Length; i++)
-                {
-                    max = Math.Max(max, args[i]);
-                }
+            Arguments.MinCount(2, args.Length);
 
-                return max;
+            double max = args[0];
+            for (int i = 1; i < args.Length; i++)
+            {
+                max = Math.Max(max, args[i]);
             }
 
-            throw new ArithmeticException($"Invalid number of arguments, expected 2 or more but {args.Length} was get.");
+            return max;
         }
     }
 }

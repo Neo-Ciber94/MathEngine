@@ -9,19 +9,14 @@ namespace ExtraUtils.MathEngine.Functions.Common
 
         public double Call(ReadOnlySpan<double> args)
         {
-            if (args.Length == 1)
+            Arguments.Count(1, 2, args.Length);
+
+            return args.Length switch
             {
-                return Math.Log10(args[0]);
-            }
-            else if (args.Length == 2)
-            {
-                return Math.Log(args[0], args[1]);
-            }
-            else
-            {
-                Requires.ArgumentCount(2, args.Length);
-                return 0;
-            }
+                1 => Math.Log10(args[0]),
+                2 => Math.Log(args[0], args[1]),
+                _ => throw new ArgumentException()
+            };
         }
     }
 }

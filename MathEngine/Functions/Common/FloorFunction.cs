@@ -11,7 +11,7 @@ namespace ExtraUtils.MathEngine.Functions.Common
 
         public double Call(ReadOnlySpan<double> args)
         {
-            Requires.ArgumentCount(1, args.Length);
+            Arguments.Count(1, args.Length);
             return Math.Floor(args[0]);
         }
     }

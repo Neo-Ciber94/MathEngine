@@ -10,7 +10,7 @@ namespace ExtraUtils.MathEngine.Functions.Common
         public int Arity => 1;
         public double Call(ReadOnlySpan<double> args)
         {
-            Requires.ArgumentCount(1, args.Length);
+            Arguments.Count(1, args.Length);
             return Math.Round(args[0]);
         }
     }

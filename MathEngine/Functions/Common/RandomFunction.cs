@@ -1,4 +1,5 @@
 using System;
+using ExtraUtils.MathEngine.Utilities;
 
 namespace ExtraUtils.MathEngine.Functions.Common
 {
@@ -20,25 +21,18 @@ namespace ExtraUtils.MathEngine.Functions.Common
 
         public double Call(ReadOnlySpan<double> args)
         {
-            switch (args.Length)
+            Arguments.Count(0, 2, args.Length);
+
+            return args.Length switch
             {
-                case 0:
-                    return random.NextDouble();
-                case 1:
-                    return GetRandom(args[0]);
-                case 2:
-                    return GetRandom(args[0], args[1]);
-                default:
-                    throw new ArgumentException($"Invalid number of arguments, expected 0 to 2 arguments but {args.Length} was get.");
-            }
+                0 => random.NextDouble(),
+                1 => NextRange(0, args[0]),
+                2 => NextRange(args[0], args[1]),
+                _ => throw new ArgumentException()
+            };
         }
 
-        private double GetRandom(double max)
-        {
-            return GetRandom(0, max);
-        }
-
-        private double GetRandom(double min, double max)
+        private double NextRange(double min, double max)
         {
             return random.NextDouble() * (max - min) + min;
         }

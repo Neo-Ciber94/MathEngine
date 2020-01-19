@@ -38,7 +38,7 @@ namespace ExtraUtils.MathEngine.Functions
 
         double IFunction.Call(ReadOnlySpan<double> args)
         {
-            Requires.ArgumentCount(1, args.Length);
+            Arguments.Count(1, args.Length);
             return Evaluate(args[0]);
         }
 

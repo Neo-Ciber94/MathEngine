@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using ExtraUtils.MathEngine.Functions;
 using ExtraUtils.MathEngine.Utilities;
 
@@ -429,10 +428,9 @@ namespace ExtraUtils.MathEngine
                                 output.Push(Token.ArgCount(argCount));
                                 output.Push(operators.Pop());
 
-                                if(func.Arity >= 0)
+                                if(func.Arity >= 0 && func.Arity != argCount)
                                 {
-                                    Debug.Assert(func.Arity == argCount,
-                                        $"Invalid argCount for {func.Name} expected: {func.Arity} but {argCount} was get");
+                                    throw new InvalidOperationException($"Invalid argCount for {func.Name} expected: {func.Arity} but {argCount} was get");
                                 }
                             }
                         }
