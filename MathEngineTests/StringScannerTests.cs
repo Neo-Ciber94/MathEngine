@@ -8,7 +8,7 @@ namespace ExtraUtils.MathEngine.Utilities.Tests
         [Test()]
         public void ReadTest()
         {
-            StringScanner sc = new StringScanner("Hello");
+            ValueStringReader sc = new ValueStringReader("Hello");
 
             Assert.IsTrue(sc.HasNext);
 
@@ -24,7 +24,7 @@ namespace ExtraUtils.MathEngine.Utilities.Tests
         [Test()]
         public void CurrentTest()
         {
-            StringScanner sc = new StringScanner("Hello");
+            ValueStringReader sc = new ValueStringReader("Hello");
             Assert.IsNull(sc.Current);
 
             sc.Read();
@@ -49,7 +49,7 @@ namespace ExtraUtils.MathEngine.Utilities.Tests
         [Test()]
         public void PrevTest()
         {
-            StringScanner sc = new StringScanner("Hello");
+            ValueStringReader sc = new ValueStringReader("Hello");
             Assert.IsNull(sc.Prev);
 
             sc.Read();
@@ -77,7 +77,7 @@ namespace ExtraUtils.MathEngine.Utilities.Tests
         [Test()]
         public void NextTest()
         {
-            StringScanner sc = new StringScanner("Hello");
+            ValueStringReader sc = new ValueStringReader("Hello");
 
             Assert.AreEqual('H', sc.Next);
             sc.Read();

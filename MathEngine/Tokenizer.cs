@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ExtraUtils.MathEngine.Functions;
 using ExtraUtils.MathEngine.Utilities;
+using NativeCollections.Utility;
 
 namespace ExtraUtils.MathEngine
 {
@@ -103,7 +104,87 @@ namespace ExtraUtils.MathEngine
                 {
                     tokens.Add(new Token(current, TokenType.Unknown));
                 }
+            }
 
+            return tokens.ToArray();
+        }
+
+        /// <summary>
+        /// Gets an array with all the tokens of the given expression.
+        /// </summary>
+        /// <param name="expression">The expression to split.</param>
+        /// <returns>An array with the tokens of the expression.</returns>
+        public static string[] ToStringArray(string expression)
+        {
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                return Array.Empty<string>();
+            }
+
+            List<string> tokens = new List<string>();
+            ValueStringReader scanner = new ValueStringReader(expression);
+            char curChar;
+
+            while (scanner.HasNext)
+            {
+                curChar = scanner.Read();
+
+                if (char.IsLetter(curChar))
+                {
+                    StringBuilder sb = StringBuilderCache.Acquire();
+
+                    do
+                    {
+                        sb.Append(curChar);
+                        char? nextChar = scanner.Next;
+
+                        if (nextChar != null && char.IsLetterOrDigit(nextChar.Value))
+                        {
+                            curChar = scanner.Read();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    while (true);
+
+                    tokens.Add(StringBuilderCache.ToStringAndRelease(ref sb!));
+                }
+                else if (char.IsDigit(curChar))
+                {
+                    StringBuilder sb = StringBuilderCache.Acquire();
+                    bool hasDecimalPoint = false;
+
+                    do
+                    {
+                        if (curChar == '.' && !hasDecimalPoint)
+                        {
+                            hasDecimalPoint = true;
+                        }
+
+                        sb.Append(curChar);
+                        char? nextChar = scanner.Next;
+                        if (nextChar != null && (char.IsDigit(nextChar.Value) || (nextChar == '.' && !hasDecimalPoint)))
+                        {
+                            curChar = scanner.Read();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    while (true);
+
+                    tokens.Add(StringBuilderCache.ToStringAndRelease(ref sb!));
+                }
+                else
+                {
+                    if (char.IsWhiteSpace(curChar))
+                        continue;
+
+                    tokens.Add(curChar.ToString());
+                }
             }
 
             return tokens.ToArray();
@@ -120,9 +201,9 @@ namespace ExtraUtils.MathEngine
 
             if (op.Notation == OperatorNotation.Prefix)
             {
-                if (prev != null && (prev == ")" 
-                    || IsNumber(prev) 
-                    || context.IsVariableOrConstant(prev) 
+                if (prev != null && (prev == ")"
+                    || IsNumber(prev)
+                    || context.IsVariableOrConstant(prev)
                     || (context.IsUnaryOperator(prev) && !context.IsBinaryOperator(prev))))
                 {
                     return false;
@@ -138,86 +219,6 @@ namespace ExtraUtils.MathEngine
             {
                 return false;
             }
-        }
-
-        /// <summary>
-        /// Gets an array with all the tokens of the given expression.
-        /// </summary>
-        /// <param name="expression">The expression to split.</param>
-        /// <returns>An array with the tokens of the expression.</returns>
-        public static string[] ToStringArray(string expression)
-        {
-            if (string.IsNullOrWhiteSpace(expression))
-            {
-                return Array.Empty<string>();
-            }
-
-            List<string> tokens = new List<string>();
-            StringScanner scanner = new StringScanner(expression);
-            char curChar;
-
-            while (scanner.HasNext)
-            {
-                curChar = scanner.ReadChar();
-
-                if (char.IsLetter(curChar))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    do
-                    {
-                        sb.Append(curChar);
-                        char? nextChar = scanner.Next;
-
-                        if (nextChar != null && char.IsLetterOrDigit(nextChar.Value))
-                        {
-                            curChar = scanner.ReadChar();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    while (true);
-
-                    tokens.Add(sb.ToString());
-                }
-                else if (char.IsDigit(curChar))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    bool hasDecimalPoint = false;
-
-                    do
-                    {
-                        if (curChar == '.' && !hasDecimalPoint)
-                        {
-                            hasDecimalPoint = true;
-                        }
-
-                        sb.Append(curChar);
-                        char? nextChar = scanner.Next;
-                        if (nextChar != null && (char.IsDigit(nextChar.Value) || (nextChar == '.' && !hasDecimalPoint)))
-                        {
-                            curChar = scanner.ReadChar();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    while (true);
-
-                    tokens.Add(sb.ToString());
-                }
-                else
-                {
-                    if (char.IsWhiteSpace(curChar))
-                        continue;
-
-                    tokens.Add(curChar.ToString());
-                }
-            }
-
-            return tokens.ToArray();
         }
 
         private static bool IsValidOperator(char c)
